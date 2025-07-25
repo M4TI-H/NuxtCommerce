@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Button } from 'primevue';
+const supabase = useSupabaseClient();
 
 const email = ref<string>("");
 const pass = ref<string>("");
@@ -10,18 +11,20 @@ function isWhitespace(input: string) {
   return /^\s*$/.test(input);
 }
 
-async function handleLogin(email: string, pass: string) {
-  console.log(`Submitted: ${email} and ${pass}`);
-  if (!email || !pass) {
-    errMsg.value = "Please fill all form fields.";
+async function handleLogin(email: string, password: string) {
+  console.log(`Submitted: ${email} and ${password}`);
+  if (!email || !password || isWhitespace(email) || isWhitespace(password)) {
+    errMsg.value = "Please fill all form fields correctly.";
     return;
   }
-  else if (isWhitespace(email) || isWhitespace(pass)){
-    errMsg.value = "Please input correct data.";
-    return;
-  }
+  
+  let { data } = await supabase
+    .from('users')
+    .select()
 
-  navigateTo("/panel");
+  console.log(data);
+
+
 }
 
 watchEffect(() => {

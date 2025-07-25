@@ -6,7 +6,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   ssr: false,
-  modules: ["@primevue/nuxt-module"],
+  modules: [
+    "@primevue/nuxt-module",
+    "@nuxtjs/supabase"
+  ],
   primevue: {
     options: {
       theme: {
@@ -20,7 +23,6 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
-  css: [
-    "~/style.css",
-  ]
+  css: ["~/style.css"],
+  
 });
