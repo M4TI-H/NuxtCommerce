@@ -1,4 +1,9 @@
 <script setup lang="ts">
+
+function handleLogout() {
+  navigateTo("/");
+}
+
 </script>
 
 <template>
@@ -6,6 +11,6 @@
     flex items-center justify-between p-4">
     <p class="text-neutral-100 text-xl font-semibold">Logged as: </p>
     <a class="text-neutral-100 text-2xl font-semibold decoration-none" href="/panel">Nuxt Commerce</a>
-    <Button label="Log out"/>
+    <Button @click="handleLogout" label="Log out"/>
   </div>
 </template>

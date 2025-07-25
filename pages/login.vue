@@ -42,7 +42,7 @@ watchEffect(() => {
       <p class="text-neutral-100 text-2xl font-semibold">Login to your account</p>
       <IftaLabel class="w-full">
         <InputText id="email" type="text" v-model="email" 
-          class="w-full bg-neutral-50"/>
+          class="w-full"/>
         <label for="email">Email</label>
       </IftaLabel>
 
