@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Button } from 'primevue';
 const supabase = useSupabaseClient();
 
 const email = ref<string>("");
-const pass = ref<string>("");
+const password = ref<string>("");
 const errMsg = ref<string>();
 const filledInputs = ref<boolean>(false);
 
@@ -11,26 +10,37 @@ function isWhitespace(input: string) {
   return /^\s*$/.test(input);
 }
 
-async function handleLogin(email: string, password: string) {
-  console.log(`Submitted: ${email} and ${password}`);
-  if (!email || !password || isWhitespace(email) || isWhitespace(password)) {
+const loginUser = async () => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email.value.trim(),
+    password: password.value
+  });
+
+  if (error) {
+    return error.message;
+  }
+
+  return "success";
+}
+
+async function handleLogin() {
+  if (!email.value || !password.value || isWhitespace(email.value) || isWhitespace(password.value)) {
     errMsg.value = "Please fill all form fields correctly.";
     return;
   }
   
-  let { data } = await supabase
-    .from('users')
-    .select()
-
-  console.log(data);
-
-
+  const response = await loginUser();
+  if (response === "success"){
+    navigateTo("/panel");
+  }
+  else {
+    errMsg.value = response;
+  }
 }
 
 watchEffect(() => {
-  if (email.value && pass.value) filledInputs.value = true;
-  else filledInputs.value = false;
-})
+  email.value && password.value ? filledInputs.value = true : filledInputs.value = false;
+});
 
 </script>
 
@@ -50,15 +60,17 @@ watchEffect(() => {
       </IftaLabel>
 
       <IftaLabel class="w-full">
-        <InputText id="password" type="password" v-model="pass" 
+        <InputText id="password" type="password" v-model="password" 
           class="w-full"/>
         <label for="password">Password</label>
       </IftaLabel>
 
       <span class="w-full flex justify-around">
-        <Button as="a" href="/" label="Back" class="w-24"/>
+        <NuxtLink to="/">
+          <Button label="Back" class="w-24"/>
+        </NuxtLink>
 
-        <Button @click="handleLogin(email, pass)"
+        <Button @click="handleLogin"
           icon="pi pi-user" label="Login" raised 
           :disabled="!filledInputs" class="w-24"
         />

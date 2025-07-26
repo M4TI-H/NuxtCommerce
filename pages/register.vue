@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Button } from 'primevue';
+const supabase = useSupabaseClient();
 
 const email = ref<string>("");
-const pass = ref<string>("");
+const password = ref<string>("");
 const errMsg = ref<string>();
 const filledInputs = ref<boolean>(false);
 
@@ -10,18 +10,36 @@ function isWhitespace(input: string) {
   return /^\s*$/.test(input);
 }
 
-async function handleRegister(email: string, pass: string) {
-  console.log(`Submitted: ${email} and ${pass}`);
-  if (!email || !pass) {
-    errMsg.value = "Please fill all form fields.";
+const registerUser = async () => {
+  const { data, error } = await supabase.auth.signUp({
+    email: email.value.trim(),
+    password: password.value
+  });
+
+  if (error) {
+    return error.message;
   }
-  else if (isWhitespace(email) || isWhitespace(pass)){
-    errMsg.value = "Please input correct data.";
+
+  return "success";
+}
+
+async function handleRegister() {
+  if (!email.value || !password.value || isWhitespace(email.value) || isWhitespace(password.value)) {
+    errMsg.value = "Please fill all form fields correctly.";
+    return;
+  }
+
+  const response = await registerUser();
+  if (response === "success"){
+    navigateTo("/panel");
+  }
+  else {
+    errMsg.value = response;
   }
 }
 
 watchEffect(() => {
-  if (email.value && pass.value) filledInputs.value = true;
+  if (email.value && password.value) filledInputs.value = true;
   else filledInputs.value = false;
 })
 
@@ -43,15 +61,17 @@ watchEffect(() => {
       </IftaLabel>
 
       <IftaLabel class="w-full">
-        <InputText id="password" type="password" v-model="pass" 
+        <InputText id="password" type="password" v-model="password" 
           class="w-full"/>
         <label for="password">Password</label>
       </IftaLabel>
 
      <span class="w-full flex justify-around">
-        <Button as="a" href="/" label="Back" class="w-24"/>
+        <NuxtLink to="/">
+          <Button label="Back" class="w-24"/>
+        </NuxtLink>
 
-        <Button @click="handleRegister(email, pass)"
+        <Button @click="handleRegister()"
           icon="pi pi-user-plus" label="Register" raised 
           :disabled="!filledInputs" class="w-24"
         />

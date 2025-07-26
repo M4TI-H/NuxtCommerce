@@ -25,4 +25,7 @@ export default defineNuxtConfig({
   },
   css: ["~/style.css"],
   
+  supabase: {
+    redirect: false
+  }
 });
