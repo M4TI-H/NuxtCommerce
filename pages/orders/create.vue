@@ -8,16 +8,19 @@ definePageMeta({
 const { productsData, fetchProducts } = useFetchProducts();
 onMounted(fetchProducts);
 
-const selectedNewProduct = ref<number>();
+const selectedNewProduct = ref<number | null>(null);
 const isProductSelected = ref<boolean>(false);
 
-const options = productsData.value?.map(product => product.name);
+const options = computed(() =>
+  productsData.value?.map(product => ({
+    label: product.name,
+    value: product.id
+  })) || []
+);
 
-const handleSelectProduct = () => {
-  if (!isProductSelected.value) {
-    isProductSelected.value = true;
-  }
-}
+watch(selectedNewProduct, (newValue) => {
+  isProductSelected.value = newValue !== null;
+});
 
 const handleAddToOrder = () => {
   console.log("Added product");
@@ -37,7 +40,10 @@ const handleAddToOrder = () => {
       </div>
 
       <span class="flex gap-8">
-        <Select @change="handleSelectProduct" :options="options" v-model="selectedNewProduct" placeholder="Select product" class="w-64"/>
+        <Select v-model="selectedNewProduct" :options="options" 
+          option-label="label" option-value="value" 
+          placeholder="Select product" class="w-64"
+        />
         <Button @click="handleAddToOrder" label="Add to your order" icon="pi pi-plus-circle" :disabled="!isProductSelected"/>
       </span>
       <span class="w-full h-24 flex flex-col gap-4 items-end mt-auto">
