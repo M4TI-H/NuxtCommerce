@@ -4,17 +4,16 @@ definePageMeta({
   middleware: () => {
     const user = useSupabaseUser();
     if (user.value) {
-      return navigateTo('/panel');
+      return navigateTo("/panel");
     }
   }
 });
-
 
 </script>
 
 <template>
   <div class="fixed bg-neutral-700 w-screen h-screen flex items-center justify-center">
-    <div class="w-[30vw] h-[30vh] bg-neutral-800 flex flex-col items-center justify-center gap-16 rounded-3xl shadow-xl">
+    <div class="w-[40vw] h-[35vh] bg-neutral-800 flex flex-col items-center justify-center gap-16 rounded-3xl shadow-xl">
       <p class="text-neutral-100 text-4xl font-semibold">Welcome to NuxtCommerce!</p>
       <div class="w-64 flex justify-between">
         <NuxtLink to="/login">

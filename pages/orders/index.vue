@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
 
+definePageMeta({
+  middleware: () => {
+    const user = useSupabaseUser();
+    if (!user.value) {
+      return navigateTo("/");
+    }
+  }
+});
 
 </script>
 

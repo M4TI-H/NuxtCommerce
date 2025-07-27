@@ -51,7 +51,7 @@ watchEffect(() => {
       <p class="text-red-700 font-semibold">{{ errMsg }}</p>
     </div>
 
-    <div class="w-96 h-[50vh] bg-neutral-800 flex flex-col items-center gap-16 p-8 pb-0 rounded-3xl shadow-xl">
+    <div class="w-96 h-108 bg-neutral-800 flex flex-col items-center gap-16 p-8 pb-0 rounded-3xl shadow-xl">
       <p class="text-neutral-100 text-2xl font-semibold">Login to your account</p>
       <IftaLabel class="w-full">
         <InputText id="email" type="text" v-model="email" 

@@ -5,7 +5,7 @@ definePageMeta({
   middleware: () => {
     const user = useSupabaseUser();
     if (!user.value) {
-      return navigateTo('/');
+      return navigateTo("/");
     }
   }
 });
