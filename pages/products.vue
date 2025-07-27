@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
+const supabase = useSupabaseClient();
 
 definePageMeta({
   middleware: () => {
@@ -23,6 +24,23 @@ const newProductData = ref<ProductType>({
   isPublic: false,
   price: 0
 })
+
+const productsData = ref<ProductType[]>();
+
+async function fetchProducts() {
+  const { data, error } = await supabase
+  .from("products")
+  .select("*")
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  productsData.value = data;
+}
+
+onMounted(async () => fetchProducts());
 
 </script>
 
@@ -51,7 +69,7 @@ const newProductData = ref<ProductType>({
         </span>
         <Button label="Submit" class="mt-auto"/>
       </div>
-      <Product />
+      <Product v-for="product in productsData" :product="product"/>
     </div>
   </div>
 </template>

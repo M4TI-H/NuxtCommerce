@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { ProductType } from '~/pages/products.vue';
 
-const { productData } = defineProps<{
-  productData: ProductType,
+const { product } = defineProps<{
+  product: ProductType,
 }>();
 
-const name = ref<string>(productData.name);
-const price = ref<number>(productData.price);
-const isPublic = ref<boolean>(productData.isPublic);
+const name = ref<string>(product.name);
+const price = ref<number>(product.price);
+const isPublic = ref<boolean>(product.isPublic);
 
 const emit = defineEmits(["confirm", "cancel"]);
 
@@ -30,8 +30,8 @@ const handleCancel = () => emit("cancel");
     <p class="text-neutral-100 text-md">Set visibility to</p>
     <Button
       @click="isPublic = !isPublic"
-      :icon="isPublic ? 'pi pi-lock-open' : 'pi pi-lock'"
-      :label="isPublic ? 'Public' : 'Private'"
+      :icon="isPublic ? 'pi pi-lock' : 'pi pi-lock-open'"
+      :label="isPublic ? 'Private' : 'Public'"
       size="small" class="w-20"
     />
   </span>

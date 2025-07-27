@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import type { ProductType } from '~/pages/products.vue';
 
+const { product } = defineProps<{
+  product: ProductType
+}>();
 
-const productData = ref<ProductType>({
-  name: "",
-  code: 0,
-  isPublic: false,
-  price: 0
-});
 
 const isEditted = ref<boolean>(false);
 const switchDisplayMode = () => isEditted.value = !isEditted.value;
@@ -19,8 +16,8 @@ const handleEdit = () => {
 </script>
 
 <template>
-  <div class="w-64 h-96 p-4 flex flex-col items-center bg-neutral-800 rounded-2xl gap-8">
-    <ProductData v-if="!isEditted" :productData="productData" @edit="switchDisplayMode"/>
-    <ProductEdit v-if="isEditted" :productData="productData" @confirm="handleEdit" @cancel="switchDisplayMode"/>
+  <div class="w-64 h-96 p-4 flex flex-col items-center bg-neutral-800 rounded-2xl gap-12">
+    <ProductData v-if="!isEditted" :product="product" @edit="switchDisplayMode"/>
+    <ProductEdit v-if="isEditted" :product="product" @confirm="handleEdit" @cancel="switchDisplayMode"/>
   </div>
 </template>

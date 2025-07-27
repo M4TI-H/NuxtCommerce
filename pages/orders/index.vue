@@ -21,7 +21,6 @@ definePageMeta({
       <i class="pi pi-cart-plus" style="font-size: 40px"></i>
       <p class="text-neutral-50 text-xl font-semibold">Create new order</p>
     </div>
-
     <Order />
   </div>
 </template>
