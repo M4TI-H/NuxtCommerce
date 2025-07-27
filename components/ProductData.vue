@@ -1,14 +1,29 @@
 <script setup lang="ts">
 import type { ProductType } from '~/pages/products.vue';
-import { inject } from 'vue';
+const supabase = useSupabaseClient();
 
 const { product } = defineProps<{
   product: ProductType,
 }>();
 
 const emit = defineEmits(["edit"]);
+const refresh = inject<() => void>('refreshProducts');
 
 const handleEdit = () => emit("edit");
+
+async function deleteProduct(id: number) {
+  const { error } = await supabase
+  .from("products")
+  .delete()
+  .eq("id", id)
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+  
+  refresh?.();
+}
 
 </script>
 
@@ -26,6 +41,6 @@ const handleEdit = () => emit("edit");
 
   <span class="w-full flex items-center justify-evenly mt-auto">
     <Button @click="handleEdit" label="Edit" size="small" class="w-24" severity="info"/>
-    <Button label="Delete" size="small" class="w-24" severity="danger"/>
+    <Button @click="deleteProduct(product.id)" label="Delete" size="small" class="w-24" severity="danger"/>
   </span>
 </template>

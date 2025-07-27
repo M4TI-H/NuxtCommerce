@@ -5,7 +5,6 @@ const { product } = defineProps<{
   product: ProductType
 }>();
 
-
 const isEditted = ref<boolean>(false);
 const switchDisplayMode = () => isEditted.value = !isEditted.value;
 

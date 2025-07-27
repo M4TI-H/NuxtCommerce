@@ -12,6 +12,7 @@ definePageMeta({
 });
 
 export interface ProductType {
+  id: number;
   name: string;
   code: number;
   isPublic: boolean;
@@ -19,6 +20,7 @@ export interface ProductType {
 }
 
 const newProductData = ref<ProductType>({
+  id: 0,
   name: "",
   code: 0,
   isPublic: false,
@@ -30,7 +32,7 @@ const productsData = ref<ProductType[]>();
 async function fetchProducts() {
   const { data, error } = await supabase
   .from("products")
-  .select("*")
+  .select("id, name, code, isPublic, price")
 
   if (error) {
     console.error(error);
@@ -40,7 +42,8 @@ async function fetchProducts() {
   productsData.value = data;
 }
 
-onMounted(async () => fetchProducts());
+onMounted(fetchProducts);
+provide("refreshProducts", fetchProducts);
 
 </script>
 
