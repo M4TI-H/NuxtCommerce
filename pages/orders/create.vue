@@ -2,22 +2,16 @@
 import Menu from '~/components/Menu.vue';
 
 definePageMeta({
-  middleware: () => {
-    const user = useSupabaseUser();
-    if (!user.value) {
-      return navigateTo("/");
-    }
-  }
+  middleware: 'auth'
 });
+
+const { productsData, fetchProducts } = useFetchProducts();
+onMounted(fetchProducts);
 
 const selectedNewProduct = ref<number>();
 const isProductSelected = ref<boolean>(false);
 
-const options = [
-  'product 1',
-  'product 2',
-  'product 3',
-];
+const options = productsData.value?.map(product => product.name);
 
 const handleSelectProduct = () => {
   if (!isProductSelected.value) {

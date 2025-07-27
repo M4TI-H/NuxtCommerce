@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProductType } from '~/pages/products.vue';
+import type ProductType from '~/types/ProductType';
 const supabase = useSupabaseClient();
 
 const { product } = defineProps<{
@@ -7,7 +7,7 @@ const { product } = defineProps<{
 }>();
 
 const emit = defineEmits(["edit"]);
-const refresh = inject<() => void>('refreshProducts');
+const { fetchProducts } = useFetchProducts();
 
 const handleEdit = () => emit("edit");
 
@@ -22,7 +22,7 @@ async function deleteProduct(id: number) {
     return;
   }
   
-  refresh?.();
+  fetchProducts();
 }
 
 </script>

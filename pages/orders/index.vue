@@ -2,12 +2,7 @@
 import Menu from '~/components/Menu.vue';
 
 definePageMeta({
-  middleware: () => {
-    const user = useSupabaseUser();
-    if (!user.value) {
-      return navigateTo("/");
-    }
-  }
+  middleware: 'auth'
 });
 
 </script>
