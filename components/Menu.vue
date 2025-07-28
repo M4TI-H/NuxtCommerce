@@ -3,12 +3,11 @@ const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 
 const logOutUser = async () => {
-const { error } = await supabase.auth.signOut();
-if (error) {
-  return error.message;
-}
-
-return "success";
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    return error.message;
+  }
+  return "success";
 }
 
 async function handleLogout() {

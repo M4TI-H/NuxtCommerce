@@ -11,7 +11,7 @@ function isWhitespace(input: string) {
 }
 
 const loginUser = async () => {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email: email.value.trim(),
     password: password.value
   });

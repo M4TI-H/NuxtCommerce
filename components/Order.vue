@@ -16,7 +16,6 @@ const showOrderTable = () => orderTableDisplay.value = !orderTableDisplay.value;
       <i v-if="orderTableDisplay" class="pi pi-angle-down"></i>
     </div>
     <div v-if="orderTableDisplay" class="w-[58%] h-100 bg-neutral-500 rounded-b-2xl">
-      
     </div>
   </span>
 </template>

@@ -12,7 +12,10 @@ const price = ref<number>(product.price);
 const code = ref<string>(product.code);
 const isPublic = ref<boolean>(product.isPublic);
 
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits<{
+  (e: "confirm"): void, 
+  (e: "cancel"): void
+}>();
 
 async function editProduct(id: number) {
   if(!user.value) {

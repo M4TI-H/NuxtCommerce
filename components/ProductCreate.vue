@@ -14,6 +14,10 @@ const newProductData = ref<ProductType>({
   user_id: ""
 });
 
+const emit = defineEmits<{
+  (e: "refresh"): void
+}>();
+
 async function addNewProduct(data: ProductType) {
   if (!user.value) {
     return;
@@ -43,7 +47,7 @@ async function addNewProduct(data: ProductType) {
     user_id: ""
   };
   
-  fetchProducts();
+  emit("refresh");
 }
 
 </script>

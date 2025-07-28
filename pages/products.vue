@@ -6,9 +6,12 @@ definePageMeta({
 });
 
 const { productsData, fetchProducts } = useFetchProducts();
-onMounted(fetchProducts);
 
-provide("refreshProducts", fetchProducts);
+const refreshProducts = () => {
+  fetchProducts();
+}
+
+onMounted(refreshProducts);
 
 </script>
 
@@ -16,8 +19,8 @@ provide("refreshProducts", fetchProducts);
   <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center p-8 gap-8">
     <Menu />
     <div class="w-[90%] h-full flex flex-wrap gap-8">
-      <ProductCreate @refresh="fetchProducts"/>
-      <Product v-for="product in productsData" :product="product" @refresh="fetchProducts"/>
+      <ProductCreate @refresh="refreshProducts"/>
+      <Product v-for="product in productsData" :product="product" @refresh="refreshProducts"/>
     </div>
   </div>
 </template>

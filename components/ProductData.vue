@@ -6,8 +6,10 @@ const { product } = defineProps<{
   product: ProductType,
 }>();
 
-const emit = defineEmits(["edit"]);
-const { fetchProducts } = useFetchProducts();
+const emit = defineEmits<{
+ (e: "edit"): void,
+ (e: "delete"): void
+}>();
 
 const handleEdit = () => emit("edit");
 
@@ -21,8 +23,7 @@ async function deleteProduct(id: number) {
     console.error(error);
     return;
   }
-  
-  fetchProducts();
+  emit("delete")
 }
 
 </script>
