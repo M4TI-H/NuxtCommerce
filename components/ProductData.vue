@@ -41,7 +41,7 @@ async function deleteProduct(id: number) {
   <p class="text-neutral-100 text-5xl font-bold">${{ product.price }}</p>
 
   <span class="w-full flex items-center justify-evenly mt-auto">
-    <Button @click="handleEdit" label="Edit" size="small" class="w-24" severity="info"/>
-    <Button @click="deleteProduct(product.id)" label="Delete" size="small" class="w-24" severity="danger"/>
+    <Button @click="handleEdit" label="Edit" class="w-20 h-8" severity="info"/>
+    <Button @click="deleteProduct(product.id)" label="Delete"class="w-20 h-8" severity="danger"/>
   </span>
 </template>

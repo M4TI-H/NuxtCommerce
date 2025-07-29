@@ -63,11 +63,11 @@ async function editProduct(id: number) {
       @click="isPublic = !isPublic"
       :icon="isPublic ? 'pi pi-lock-open' : 'pi pi-lock'"
       :label="isPublic ? 'Public' : 'Private'"
-      size="small" class="w-20"
+      class="w-22 h-10"
     />
   </span>
   <span class="w-full flex items-center justify-evenly mt-auto">
-    <Button @click="emit('cancel')" label="Cancel" />
-    <Button @click="editProduct(product.id)" label="Confirm"/>
+    <Button @click="emit('cancel')" label="Cancel" class="w-20 h-8"/>
+    <Button @click="editProduct(product.id)" label="Confirm" class="w-20 h-8"/>
   </span>
 </template>

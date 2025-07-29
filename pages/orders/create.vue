@@ -6,8 +6,8 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { productsData, fetchProducts } = useFetchProducts();
-onMounted(async () => await fetchProducts());
+const { publicProductsData, fetchPublicProducts } = useFetchProducts();
+onMounted(async () => await fetchPublicProducts());
 
 const selectedNewProduct = ref<number | null>(null);
 const isProductSelected = ref<boolean>(false);
@@ -15,7 +15,7 @@ const productsID = ref<number[]>([]);
 
 // data computed for product select input
 const options = computed(() =>
-  productsData.value
+  publicProductsData.value
   ?.filter(product => !productsID.value.includes(product.id))
   .map(product => ({
     label: product.name,

@@ -5,10 +5,10 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { productsData, fetchProducts } = useFetchProducts();
+const { productsData, fetchUserProducts } = useFetchProducts();
 
 const refreshProducts = () => {
-  fetchProducts();
+  fetchUserProducts();
 }
 
 onMounted(refreshProducts);

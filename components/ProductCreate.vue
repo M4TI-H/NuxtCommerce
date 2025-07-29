@@ -3,8 +3,6 @@ import type ProductType from '~/types/ProductType';
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 
-const { fetchProducts } = useFetchProducts();
-
 const newProductData = ref<ProductType>({
   id: 0,
   name: "",
