@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
+import type OrderDetail from '~/types/OrderDetailType';
 import type OrderItem from '~/types/OrderItemType';
+import type Order from '~/types/OrderType';
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 
@@ -70,17 +72,36 @@ async function createOrder() {
   if (!user.value) {
     return;
   }
-
-  const { error } = await supabase
+  
+  const { data: newOrder, error } = await supabase
   .from("orders")
   .insert({
     order_title: orderTitle.value,
     total_price: totalSum.value,
     user_id: user.value.id
-  } as any);
+  } as any)
+  .select("id")
+  .single<Order>();
+
+  if (error || !newOrder) {
+    console.error(error);
+    return;
+  }
+
+  const orderItems: OrderDetail[] = totalOrder.value.map(item => ({
+    order_id: newOrder.id,
+    product_id: item.product_id!,
+    quantity: item.quantity,
+    price_at_order: item.price,
+    user_id: user.value!.id
+  }));
+
+  const { error: details } = await supabase
+  .from("ordersDetails")
+  .insert(orderItems as any);
 
   if (error) {
-    console.error(error);
+    console.error(details);
     return;
   }
 

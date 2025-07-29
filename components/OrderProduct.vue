@@ -20,6 +20,7 @@
   const productData = ref<OrderItem>({
     product_id: product.value.id,
     quantity: 1,
+    price: product.value.price,
     total: product.value.price
   });
 
@@ -59,6 +60,7 @@
     productData.value = {
       product_id: id,
       quantity: quantity,
+      price: product.value.price,
       total: product.value.price * quantity
     };
 

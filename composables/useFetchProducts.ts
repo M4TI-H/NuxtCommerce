@@ -9,9 +9,14 @@ export default function useFetchProducts(){
 
   // fetch only the products added by the user
   const fetchUserProducts = async() => {
+    if (!user.value) {
+      return;
+    }
+
     const { data, error } = await supabase
     .from("products")
     .select("id, name, code, isPublic, price, user_id")
+    .eq("user_id", user.value.id)
     .order("date_of_creation", { ascending: false })
     .returns<ProductType[]>();
 
@@ -26,9 +31,14 @@ export default function useFetchProducts(){
 
   // fetch all products visible to single user
   const fetchPublicProducts = async() => {
+    if (!user.value) {
+      return;
+    }
+
     const { data, error } = await supabase
     .from("products")
     .select("id, name, code, isPublic, price")
+    .or(`user_id.eq.${user.value.id}, isPublic.eq.true`)
     .order("date_of_creation", { ascending: false })
 
     if (error) {
