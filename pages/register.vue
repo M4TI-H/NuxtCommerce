@@ -11,7 +11,7 @@ function isWhitespace(input: string) {
 }
 
 const registerUser = async () => {
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email: email.value.trim(),
     password: password.value
   });

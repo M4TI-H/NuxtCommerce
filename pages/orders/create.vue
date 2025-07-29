@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
 import type OrderItem from '~/types/OrderItemType';
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 
 definePageMeta({
   middleware: 'auth'
@@ -56,6 +58,37 @@ const totalSum = computed(() => {
   return totalOrder.value.reduce((sum, price) => sum + price.total, 0);  
 });
 
+const orderTitle = ref<string>("");
+const filledInputs = ref<boolean>(false);
+watchEffect(() => {
+  if (orderTitle.value && totalSum.value > 0) filledInputs.value = true;
+  else filledInputs.value = false;
+})
+
+
+async function createOrder() {
+  if (!user.value) {
+    return;
+  }
+
+  const { error } = await supabase
+  .from("orders")
+  .insert({
+    order_title: orderTitle.value,
+    total_price: totalSum.value,
+    user_id: user.value.id
+  } as any);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  orderTitle.value = "";
+
+  navigateTo("/orders");
+}
+
 </script>
 
 <template>
@@ -63,7 +96,7 @@ const totalSum = computed(() => {
     <Menu />
     <div class="w-[50vw] h-[80vh] p-4 flex flex-col items-center gap-8 bg-neutral-500 rounded-2xl">
       <p class="text-neutral-100 text-2xl font-semibold">New order</p>
-      <div class="w-full flex flex-col items-center"> 
+      <div class="w-full max-h-[45vh] flex flex-col items-center"> 
         <OrderProduct v-for="product in productsID" :productID="product"
           @update-item="updateTotalOrder" @remove-item="removeFromTotalOrder"
         />
@@ -79,8 +112,8 @@ const totalSum = computed(() => {
       <span class="w-full h-24 flex flex-col gap-4 items-end mt-auto">
         <p class="text-neutral-100 text-xl font-semibold">Order total: ${{ totalSum.toFixed(2) }}</p>
         <span class="flex gap-8">
-          <InputText placeholder="Order title" />
-          <Button label="Order" class="w-32"/>
+          <InputText v-model="orderTitle" placeholder="Order title" />
+          <Button @click="createOrder" label="Order" class="w-32" :disabled="!filledInputs"/>
         </span>
       </span>
     </div>

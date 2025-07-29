@@ -46,6 +46,12 @@
 
   const selectedQuantity = ref<number>(1);
 
+  const handleQuantityChange = async(quantity: number | null) => {
+    if (!quantity) {
+      selectedQuantity.value = 1;
+    }
+  }
+
   // emit values on load of product and change of its quantity
   watch([() => product.value.id, selectedQuantity], ([id, quantity]) => {
     if (!id) return;
@@ -76,7 +82,8 @@
       </span>
       <span class="flex items-center gap-4">
         <p class="text-neutral-400 text-xs font-semibold">Quantity:</p>
-        <InputNumber v-model="selectedQuantity" :inputStyle="{'width': '5vw', 'height': '5vh'}" :min="1"/>
+        <InputNumber v-model="selectedQuantity" :inputStyle="{'width': '5vw', 'height': '4vh'}"
+        :min="1" @update:modelValue="handleQuantityChange"/>
         <Button @click="removeProduct" icon="pi pi-times" variant="text" rounded size="small"/>
       </span>
     </div>
