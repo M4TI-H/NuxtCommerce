@@ -1,13 +1,12 @@
 import type ProductType from "~/types/ProductType";
 
-export default function useFetchProducts(){
+export function useFetchProducts(){
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
   const errorMsg = ref<string>("");
-  const productsData = ref<ProductType[]>();
-  const publicProductsData = ref<ProductType[]>();
 
   // fetch only the products added by the user
+  const productsData = ref<ProductType[]>();
   const fetchUserProducts = async() => {
     if (!user.value) {
       return;
@@ -30,6 +29,7 @@ export default function useFetchProducts(){
 
 
   // fetch all products visible to single user
+  const publicProductsData = ref<ProductType[]>();
   const fetchPublicProducts = async() => {
     if (!user.value) {
       return;
@@ -54,6 +54,6 @@ export default function useFetchProducts(){
     publicProductsData,
     errorMsg,
     fetchUserProducts,
-    fetchPublicProducts
+    fetchPublicProducts,
   }
 }

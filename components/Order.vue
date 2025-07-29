@@ -1,39 +1,14 @@
 <script setup lang="ts">
-import type OrderDetail from '~/types/OrderDetailType';
 import type Order from '~/types/OrderType';
-const supabase = useSupabaseClient();
 
 const { order } = defineProps<{
   order: Order
 }>();
 
-function formatDate(date: string): string {
-  const formattedDate = new Date(date);
-  
-  const dateOptions: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  return formattedDate.toLocaleString("en-GB", dateOptions).replace(',', '');
-}
+const { formatDate } = useFormatDate();
+const { orderDetails, fetchOrderDetails } = useFetchOrderDetails();
 
-const orderDetails = ref<any[] | null>(null);
-async function fetchOrderDetails() {
-  const { data, error } = await supabase
-  .from("ordersDetails")
-  .select(`*, products (code, name)`)
-  .eq("order_id", order.id)
-
-  if (error) {
-    console.error(error)
-  }
-  
-  orderDetails.value = data;
-}
-onMounted(fetchOrderDetails);
+onMounted(() => fetchOrderDetails(order.id));
 
 const orderTableDisplay = ref<boolean>(false);
 const showOrderTable = () => orderTableDisplay.value = !orderTableDisplay.value;

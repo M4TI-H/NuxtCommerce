@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
-import type OrderDetail from '~/types/OrderDetailType';
-import type OrderItem from '~/types/OrderItemType';
-import type Order from '~/types/OrderType';
-const supabase = useSupabaseClient();
-const user = useSupabaseUser();
 
 definePageMeta({
   middleware: 'auth'
 });
 
+const { totalOrder, createOrder, updateTotalOrder } = useCreateOrder();
 const { publicProductsData, fetchPublicProducts } = useFetchProducts();
 onMounted(async () => await fetchPublicProducts());
 
 const selectedNewProduct = ref<number | null>(null);
 const isProductSelected = ref<boolean>(false);
 const productsID = ref<number[]>([]);
+const filledInputs = ref<boolean>(false);
+const orderTitle = ref<string>("");
 
 // data computed for product select input
 const options = computed(() =>
@@ -38,77 +36,22 @@ const handleAddToOrder = () => {
   }
 }
 
-const totalOrder = ref<OrderItem[]>([]);
-// updateTotalOrder - add or update data of product added to the order
-const updateTotalOrder = (updatedItem: OrderItem) => {
-  const item_id = totalOrder.value.findIndex(item => item.product_id === updatedItem.product_id);
-
-  if (item_id !== -1) {
-    totalOrder.value[item_id] = updatedItem;
-  }
-  else {
-    totalOrder.value.push(updatedItem);
-  }
-}
-
+// handle removal from order list
 const removeFromTotalOrder = (itemToRemove: number) => {
   productsID.value = productsID.value?.filter(id => id !== itemToRemove);
   totalOrder.value = totalOrder.value?.filter(product => product.product_id !== itemToRemove);
 }
 
+// all total prices of products summarized
 const totalSum = computed(() => {
-  return totalOrder.value.reduce((sum, price) => sum + price.total, 0);  
+  return totalOrder.value.reduce((sum, item) => sum + item.total, 0);  
 });
 
-const orderTitle = ref<string>("");
-const filledInputs = ref<boolean>(false);
+// watch whether all inputs are correctly filled
 watchEffect(() => {
   if (orderTitle.value && totalSum.value > 0) filledInputs.value = true;
   else filledInputs.value = false;
 })
-
-
-async function createOrder() {
-  if (!user.value) {
-    return;
-  }
-  
-  const { data: newOrder, error } = await supabase
-  .from("orders")
-  .insert({
-    order_title: orderTitle.value,
-    total_price: totalSum.value,
-    user_id: user.value.id
-  } as any)
-  .select("id")
-  .single<Order>();
-
-  if (error || !newOrder) {
-    console.error(error);
-    return;
-  }
-
-  const orderItems: OrderDetail[] = totalOrder.value.map(item => ({
-    order_id: newOrder.id,
-    product_id: item.product_id!,
-    quantity: item.quantity,
-    price_at_order: item.price,
-    user_id: user.value!.id
-  }));
-
-  const { error: details } = await supabase
-  .from("ordersDetails")
-  .insert(orderItems as any);
-
-  if (error) {
-    console.error(details);
-    return;
-  }
-
-  orderTitle.value = "";
-
-  navigateTo("/orders");
-}
 
 </script>
 
@@ -134,7 +77,7 @@ async function createOrder() {
         <p class="text-neutral-100 text-xl font-semibold">Order total: ${{ totalSum.toFixed(2) }}</p>
         <span class="flex gap-8">
           <InputText v-model="orderTitle" placeholder="Order title" />
-          <Button @click="createOrder" label="Order" class="w-32" :disabled="!filledInputs"/>
+          <Button @click="createOrder(orderTitle, totalSum)" label="Order" class="w-32" :disabled="!filledInputs"/>
         </span>
       </span>
     </div>

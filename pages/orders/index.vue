@@ -2,7 +2,6 @@
 import Menu from '~/components/Menu.vue';
 import type Order from '~/types/OrderType';
 const supabase = useSupabaseClient();
-const user = useSupabaseUser();
 
 definePageMeta({
   middleware: 'auth'

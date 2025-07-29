@@ -41,7 +41,7 @@ async function handleRegister() {
 watchEffect(() => {
   if (email.value && password.value) filledInputs.value = true;
   else filledInputs.value = false;
-})
+});
 
 </script>
 

@@ -7,10 +7,14 @@ const { product } = defineProps<{
   product: ProductType,
 }>();
 
-const name = ref<string>(product.name);
-const price = ref<number>(product.price);
-const code = ref<string>(product.code);
-const isPublic = ref<boolean>(product.isPublic);
+const newData = ref<ProductType>({
+  id: product.id,
+  name: product.name,
+  price: product.price,
+  code: product.code,
+  isPublic: product.isPublic,
+  user_id: product.user_id
+});
 
 const emit = defineEmits<{
   (e: "confirm"): void, 
@@ -25,10 +29,10 @@ async function editProduct(id: number) {
   const { error } = await supabase
   .from("products")
   .update({
-    name: name.value,
-    price: price.value,
-    code: code.value,
-    isPublic: isPublic.value,
+    name: newData.value.name,
+    price: newData.value.price,
+    code: newData.value.code,
+    isPublic: newData.value.isPublic,
     user_id: user.value.id
   } as any)
   .eq("id", id)
@@ -44,25 +48,25 @@ async function editProduct(id: number) {
 
 <template>
   <IftaLabel class="mt-4">
-    <InputText id="name" v-model="name" class="h-12"/>
+    <InputText id="name" v-model="newData.name" class="h-12"/>
     <label for="name">Product name</label>
   </IftaLabel>
   <IftaLabel>
-    <InputNumber id="price" v-model="price" class="h-12"
+    <InputNumber id="price" v-model="newData.price" class="h-12"
       :minFractionDigits="0" :maxFractionDigits="2"/>
     <label for="price">Price</label>
   </IftaLabel>
   <IftaLabel>
-    <InputText id="code" v-model="code" class="h-12"/>
+    <InputText id="code" v-model="newData.code" class="h-12"/>
     <label for="code">Code</label>
   </IftaLabel>
 
   <span class="w-[90%] flex items-center justify-between">
     <p class="text-neutral-100 text-md">Set visibility to</p>
     <Button
-      @click="isPublic = !isPublic"
-      :icon="isPublic ? 'pi pi-lock-open' : 'pi pi-lock'"
-      :label="isPublic ? 'Public' : 'Private'"
+      @click="newData.isPublic = !newData.isPublic"
+      :icon="newData.isPublic ? 'pi pi-lock-open' : 'pi pi-lock'"
+      :label="newData.isPublic ? 'Public' : 'Private'"
       class="w-22 h-10"
     />
   </span>

@@ -1,52 +1,27 @@
   <script setup lang="ts">
-  import type ProductType from '~/types/ProductType';
   import type OrderItem from '~/types/OrderItemType';
-
-  const supabase = useSupabaseClient();
 
   const { productID } = defineProps<{
     productID: number
   }>();
-
-  const product = ref<ProductType>({
-    id: 0,
-    name: "",
-    code: "",
-    isPublic: false,
-    price: 0,
-    user_id: ""
-  });
-
-  const productData = ref<OrderItem>({
-    product_id: product.value.id,
-    quantity: 1,
-    price: product.value.price,
-    total: product.value.price
-  });
 
   const emit = defineEmits<{
     (e: "update-item", payload: OrderItem): void,
     (e: "remove-item", payload: number): void,
   }>();
 
-  const fetchProductData = async () => {
-    const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", productID)
-
-    if (error) {
-      console.error(error);
-    }
-    else {
-      product.value = data[0];
-    }
-  };
-
-  onMounted(async() => fetchProductData());
+  const { product, fetchProduct } = useFetchOneProduct();
+  onMounted(() => fetchProduct(productID));
 
   const selectedQuantity = ref<number>(1);
+  const productData = ref<OrderItem>({
+    product_id: productID,
+    quantity: 1,
+    price: 0,
+    total: 0
+  });
 
+  // change quantity to minimal if input field left empty
   const handleQuantityChange = async(quantity: number | null) => {
     if (!quantity) {
       selectedQuantity.value = 1;
@@ -54,27 +29,25 @@
   }
 
   // emit values on load of product and change of its quantity
-  watch([() => product.value.id, selectedQuantity], ([id, quantity]) => {
-    if (!id) return;
+  watch([product, selectedQuantity], ([p, q]) => {
+    if (!p) return;
 
     productData.value = {
-      product_id: id,
-      quantity: quantity,
-      price: product.value.price,
-      total: product.value.price * quantity
+      product_id: p.id,
+      quantity: q,
+      price: p.price,
+      total: p.price * q
     };
 
     emit("update-item", productData.value);
   });
 
-  const removeProduct = () => {
-    emit("remove-item", productID);
-  }
+  const removeProduct = () => emit("remove-item", productID);
 
   </script>
 
   <template>
-    <div class="w-[90%] h-12 border-neutral-400 border-b-2 flex items-center justify-between px-8 gap-2">
+    <div v-if="product" class="w-[90%] h-12 border-neutral-400 border-b-2 flex items-center justify-between px-8 gap-2">
       <span class="flex gap-8 items-center">
         <span class="flex flex-col">
           <p class="text-neutral-100 text-lg font-semibold">{{ product.name }}</p>

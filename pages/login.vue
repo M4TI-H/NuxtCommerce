@@ -15,11 +15,9 @@ const loginUser = async () => {
     email: email.value.trim(),
     password: password.value
   });
-
   if (error) {
     return error.message;
   }
-
   return "success";
 }
 
