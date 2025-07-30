@@ -5,7 +5,7 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { productsData, fetchUserProducts } = useFetchProducts();
+const { productsData, loading, fetchUserProducts } = useFetchProducts();
 
 const refreshProducts = () => {
   fetchUserProducts();
@@ -18,7 +18,10 @@ onMounted(refreshProducts);
 <template>
   <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center p-8 gap-8">
     <Menu />
-    <div class="w-[90%] h-full flex flex-wrap gap-8">
+    <div v-if="loading" class="absolute top-1/2">
+      <i class="pi pi-spin pi-spinner text-white"></i>
+    </div>
+    <div v-else class="w-[90%] h-full flex flex-wrap gap-8">
       <ProductCreate @refresh="refreshProducts"/>
       <Product v-for="product in productsData" :product="product" @refresh="refreshProducts"/>
     </div>

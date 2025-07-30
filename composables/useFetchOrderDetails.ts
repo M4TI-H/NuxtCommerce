@@ -1,9 +1,11 @@
+import type { OrderDetails } from "~/types/OrderDetailType";
+
 export function useFetchOrderDetails() {
   const supabase = useSupabaseClient();
   const errorMsg = ref<string>("");
 
   // fetch order and product details
-  const orderDetails = ref<any[] | null>(null);
+  const orderDetails = ref<OrderDetails[] | null>(null);
   const fetchOrderDetails = async (order_id: number) => {
     const { data, error } = await supabase
     .from("ordersDetails")

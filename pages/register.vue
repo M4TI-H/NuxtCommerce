@@ -5,12 +5,15 @@ const email = ref<string>("");
 const password = ref<string>("");
 const errMsg = ref<string>();
 const filledInputs = ref<boolean>(false);
+const loading = ref<boolean>(false);
 
 function isWhitespace(input: string) {
   return /^\s*$/.test(input);
 }
 
 const registerUser = async () => {
+
+  loading.value = true;
   const { error } = await supabase.auth.signUp({
     email: email.value.trim(),
     password: password.value
@@ -20,6 +23,7 @@ const registerUser = async () => {
     return error.message;
   }
 
+  loading.value = false;
   return "success";
 }
 
@@ -71,9 +75,12 @@ watchEffect(() => {
           <Button label="Back" class="w-24"/>
         </NuxtLink>
 
-        <Button @click="handleRegister()"
+        <Button v-if="!loading" @click="handleRegister()"
           icon="pi pi-user-plus" label="Register" raised 
           :disabled="!filledInputs" class="w-24"
+        />
+        <Button v-else icon="pi pi-spin pi-spinner" 
+          raised class="w-24"
         />
       </span>
     </div>

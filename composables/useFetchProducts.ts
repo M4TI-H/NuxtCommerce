@@ -4,14 +4,14 @@ export function useFetchProducts(){
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
   const errorMsg = ref<string>("");
-
+  const loading = ref<boolean>(false);
   // fetch only the products added by the user
   const productsData = ref<ProductType[]>();
   const fetchUserProducts = async() => {
     if (!user.value) {
       return;
     }
-
+    loading.value = true;
     const { data, error } = await supabase
     .from("products")
     .select("id, name, code, isPublic, price, user_id")
@@ -25,6 +25,8 @@ export function useFetchProducts(){
     else {
       productsData.value = data?.filter(product => product.user_id === user.value!.id);
     }
+
+    loading.value = false;
   };
 
 
@@ -34,6 +36,8 @@ export function useFetchProducts(){
     if (!user.value) {
       return;
     }
+
+    loading.value = true;
 
     const { data, error } = await supabase
     .from("products")
@@ -47,12 +51,15 @@ export function useFetchProducts(){
     else {
       publicProductsData.value = data;
     }
+
+    loading.value = false;
   }
 
   return {
     productsData,
     publicProductsData,
     errorMsg,
+    loading,
     fetchUserProducts,
     fetchPublicProducts,
   }

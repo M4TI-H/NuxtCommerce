@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type ProductType from '~/types/ProductType';
-const supabase = useSupabaseClient<any>();  //add product table type interface
+const supabase = useSupabaseClient<any>();
 const user = useSupabaseUser();
 
 const { product } = defineProps<{

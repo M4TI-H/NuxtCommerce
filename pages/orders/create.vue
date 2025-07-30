@@ -5,7 +5,7 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { totalOrder, createOrder, updateTotalOrder } = useCreateOrder();
+const { totalOrder, loading, createOrder, updateTotalOrder } = useCreateOrder();
 const { publicProductsData, fetchPublicProducts } = useFetchProducts();
 onMounted(async () => await fetchPublicProducts());
 
@@ -77,7 +77,8 @@ watchEffect(() => {
         <p class="text-neutral-100 text-xl font-semibold">Order total: ${{ totalSum.toFixed(2) }}</p>
         <span class="flex gap-8">
           <InputText v-model="orderTitle" placeholder="Order title" />
-          <Button @click="createOrder(orderTitle, totalSum)" label="Order" class="w-32" :disabled="!filledInputs"/>
+          <Button v-if="!loading" @click="createOrder(orderTitle, totalSum)" label="Order" class="w-32" :disabled="!filledInputs"/>
+          <Button v-else icon="pi pi-spin pi-spinner" class="w-32"/>
         </span>
       </span>
     </div>
