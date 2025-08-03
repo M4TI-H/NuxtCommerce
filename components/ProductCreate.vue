@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type ProductType from '~/types/ProductType';
-const supabase = useSupabaseClient();
-const user = useSupabaseUser();
+import type Product from '~/types/ProductType';
 
-const newProductData = ref<ProductType>({
+const newProductData = ref<Product>({
   id: 0,
   name: "",
   code: "",
@@ -16,25 +14,10 @@ const emit = defineEmits<{
   (e: "refresh"): void
 }>();
 
-async function addNewProduct(data: ProductType) {
-  if (!user.value) {
-    return;
-  }
-  
-  const { error } = await supabase
-  .from("products")
-  .insert({
-    name: data.name,
-    code: data.code,
-    price: data.price,
-    isPublic: data.isPublic,
-    user_id: user.value.id
-  } as any);
+const { addNewProduct } = useProduct();
 
-  if (error) {
-    console.error(error);
-    return;
-  }
+const handleCreateProduct = () => {
+  addNewProduct(newProductData.value);
 
   newProductData.value = {
     id: 0,
@@ -44,7 +27,7 @@ async function addNewProduct(data: ProductType) {
     price: 0,
     user_id: ""
   };
-  
+
   emit("refresh");
 }
 
@@ -75,6 +58,6 @@ async function addNewProduct(data: ProductType) {
         size="small" class="w-20"
       />
     </span>
-    <Button @click="addNewProduct(newProductData)" label="Submit" class="mt-auto"/>
+    <Button @click="handleCreateProduct" label="Submit" class="mt-auto"/>
   </div>
 </template>

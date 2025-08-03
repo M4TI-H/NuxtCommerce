@@ -5,13 +5,13 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { productsData, loading, fetchUserProducts } = useFetchProducts();
+const { productsData, loading, fetchUserProducts } = useProduct();
 
-const refreshProducts = () => {
-  fetchUserProducts();
+const refreshProductsData = async () => {
+  await fetchUserProducts();
 }
 
-onMounted(refreshProducts);
+onMounted(refreshProductsData);
 
 </script>
 
@@ -22,8 +22,8 @@ onMounted(refreshProducts);
       <i class="pi pi-spin pi-spinner text-white"></i>
     </div>
     <div v-else class="w-[90%] h-full flex flex-wrap gap-8">
-      <ProductCreate @refresh="refreshProducts"/>
-      <Product v-for="product in productsData" :product="product" @refresh="refreshProducts"/>
+      <ProductCreate @refresh="refreshProductsData"/>
+      <Product v-for="product in productsData" :product="product" @refresh="refreshProductsData"/>
     </div>
   </div>
 </template>

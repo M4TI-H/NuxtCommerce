@@ -6,7 +6,7 @@ definePageMeta({
 });
 
 const { totalOrder, loading, createOrder, updateTotalOrder } = useCreateOrder();
-const { publicProductsData, fetchPublicProducts } = useFetchProducts();
+const { publicProductsData, fetchPublicProducts } = useProduct();
 onMounted(async () => await fetchPublicProducts());
 
 const selectedNewProduct = ref<number | null>(null);

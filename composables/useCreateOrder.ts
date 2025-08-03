@@ -2,18 +2,13 @@ import type { NewOrderDetails } from '~/types/OrderDetailType';
 import type Order from '~/types/OrderType';
 import type OrderItem from '~/types/OrderItemType';
 
+
 export function useCreateOrder() {
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
   const errorMsg = ref<string>("");
   const totalOrder = ref<OrderItem[]>([]);
   const loading = ref<boolean>(false);
-
-  type InsertOrder = {
-    order_title: string;
-    total_price: number;
-    user_id: string;
-  };
 
   const createOrder = async (title: string, sum: number) => {
     if (!user.value) {
@@ -25,9 +20,9 @@ export function useCreateOrder() {
     const { data: newOrder, error } = await supabase
     .from("orders")
     .insert({
-        order_title: title,
-        total_price: sum,
-        user_id: user.value.id
+      order_title: title,
+      total_price: sum,
+      user_id: user.value.id
     } as any)
     .select("id")
     .single<Order>();
@@ -58,7 +53,6 @@ export function useCreateOrder() {
       return;
     }
 
-    title = "";
     loading.value = false;
     navigateTo("/orders");
   }

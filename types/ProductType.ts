@@ -1,4 +1,4 @@
-export default interface ProductType {
+export default interface Product {
   id: number;
   name: string;
   code: string;

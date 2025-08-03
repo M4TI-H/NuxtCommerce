@@ -1,29 +1,21 @@
 <script setup lang="ts">
-import type ProductType from '~/types/ProductType';
-const supabase = useSupabaseClient();
+import type Product from '~/types/ProductType';
 
 const { product } = defineProps<{
-  product: ProductType,
+  product: Product,
 }>();
 
 const emit = defineEmits<{
  (e: "edit"): void,
- (e: "delete"): void
+ (e: "delete"): void,
+ (e: "refresh"): void
 }>();
 
-const handleEdit = () => emit("edit");
+const {  deleteProduct } = useProduct();
 
-async function deleteProduct(id: number) {
-  const { error } = await supabase
-  .from("products")
-  .delete()
-  .eq("id", id)
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-  emit("delete")
+const handleDelete = async () => {
+  await deleteProduct(product.id);
+  emit("refresh");
 }
 
 </script>
@@ -41,7 +33,7 @@ async function deleteProduct(id: number) {
   <p class="text-neutral-100 text-5xl font-bold">${{ product.price }}</p>
 
   <span class="w-full flex items-center justify-evenly mt-auto">
-    <Button @click="handleEdit" label="Edit" class="w-20 h-8" severity="info"/>
-    <Button @click="deleteProduct(product.id)" label="Delete"class="w-20 h-8" severity="danger"/>
+    <Button @click="emit('edit')" label="Edit" class="w-20 h-8" severity="info"/>
+    <Button @click="handleDelete" label="Delete"class="w-20 h-8" severity="danger"/>
   </span>
 </template>

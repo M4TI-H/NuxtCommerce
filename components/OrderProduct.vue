@@ -1,5 +1,5 @@
   <script setup lang="ts">
-  import type OrderItem from '~/types/OrderItemType';
+  import type OrderItem from '~/types/OrderItemType'; 
 
   const { productID } = defineProps<{
     productID: number
@@ -10,8 +10,8 @@
     (e: "remove-item", payload: number): void,
   }>();
 
-  const { product, fetchProduct } = useFetchOneProduct();
-  onMounted(() => fetchProduct(productID));
+  const { product, fetchOneProduct } = useProduct();
+  onMounted(() => fetchOneProduct(productID));
 
   const selectedQuantity = ref<number>(1);
   const productData = ref<OrderItem>({

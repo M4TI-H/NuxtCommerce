@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type ProductType from '~/types/ProductType';
-const supabase = useSupabaseClient<any>();
-const user = useSupabaseUser();
+import type Product from '~/types/ProductType';
 
 const { product } = defineProps<{
-  product: ProductType,
+  product: Product,
 }>();
 
-const newData = ref<ProductType>({
+const { editProduct } = useProduct();
+
+const newData = ref<Product>({
   id: product.id,
   name: product.name,
   price: product.price,
@@ -18,29 +18,11 @@ const newData = ref<ProductType>({
 
 const emit = defineEmits<{
   (e: "confirm"): void, 
-  (e: "cancel"): void
+  (e: "cancel"): void,
 }>();
 
-async function editProduct(id: number) {
-  if(!user.value) {
-    return;
-  }
-
-  const { error } = await supabase
-  .from("products")
-  .update({
-    name: newData.value.name,
-    price: newData.value.price,
-    code: newData.value.code,
-    isPublic: newData.value.isPublic,
-    user_id: user.value.id
-  } as any)
-  .eq("id", id)
-
-  if (error) {
-    console.log(error);
-    return;
-  }
+const handleEdit = () => {
+  editProduct(newData.value, product.id);
   emit("confirm");
 }
 
@@ -72,6 +54,6 @@ async function editProduct(id: number) {
   </span>
   <span class="w-full flex items-center justify-evenly mt-auto">
     <Button @click="emit('cancel')" label="Cancel" class="w-20 h-8"/>
-    <Button @click="editProduct(product.id)" label="Confirm" class="w-20 h-8"/>
+    <Button @click="handleEdit" label="Confirm" class="w-20 h-8"/>
   </span>
 </template>
