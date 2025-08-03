@@ -1,5 +1,5 @@
 import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
-import type Product from "~/types/ProductType";
+import type Order from "~/types/OrderType";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -9,21 +9,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: "User unauthorized" });
   }
 
-  const { productID } = event.context.params!;
-
-  if (!productID || isNaN(Number(productID))) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid product ID" });
-  }
-
   const { data, error } = await supabase
-    .from("products")
+    .from("orders")
     .select("*")
-    .eq("id", productID)
-    .single()
+    .order("order_date", { ascending: false })
 
   if (error) {
     throw createError({ statusCode: 500, statusMessage: error.message });
   }
 
-  return data as Product;
+  return data as Order[];
 });

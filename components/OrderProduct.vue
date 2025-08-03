@@ -11,7 +11,9 @@
   }>();
 
   const { product, fetchOneProduct } = useProduct();
-  onMounted(() => fetchOneProduct(productID));
+  onMounted(async () => {
+    await fetchOneProduct(productID);
+  });
 
   const selectedQuantity = ref<number>(1);
   const productData = ref<OrderItem>({
@@ -42,8 +44,6 @@
     emit("update-item", productData.value);
   });
 
-  const removeProduct = () => emit("remove-item", productID);
-
   </script>
 
   <template>
@@ -59,7 +59,7 @@
         <p class="text-neutral-400 text-xs font-semibold">Quantity:</p>
         <InputNumber v-model="selectedQuantity" :inputStyle="{'width': '5vw', 'height': '4vh'}"
         :min="1" @update:modelValue="handleQuantityChange"/>
-        <Button @click="removeProduct" icon="pi pi-times" variant="text" rounded size="small"/>
+        <Button @click="emit('remove-item', productID)" icon="pi pi-times" variant="text" rounded size="small"/>
       </span>
     </div>
   </template>

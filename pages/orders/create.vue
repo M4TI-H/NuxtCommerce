@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
+import type OrderItem from '~/types/OrderItemType';
 
 definePageMeta({
   middleware: 'auth'
 });
 
-const { totalOrder, loading, createOrder, updateTotalOrder } = useCreateOrder();
+const { totalOrder, loading, createOrder, updateTotalOrder } = useOrder();
 const { publicProductsData, fetchPublicProducts } = useProduct();
+
 onMounted(async () => await fetchPublicProducts());
 
 const selectedNewProduct = ref<number | null>(null);
@@ -29,7 +31,7 @@ watch(selectedNewProduct, (newValue) => {
   isProductSelected.value = newValue !== null;
 });
 
-// handleAddToOrder - pass product ID to display its content
+// pass product ID to display its content
 const handleAddToOrder = () => {
   if (selectedNewProduct.value) {
     productsID.value.push(selectedNewProduct.value);
@@ -38,20 +40,24 @@ const handleAddToOrder = () => {
 
 // handle removal from order list
 const removeFromTotalOrder = (itemToRemove: number) => {
-  productsID.value = productsID.value?.filter(id => id !== itemToRemove);
-  totalOrder.value = totalOrder.value?.filter(product => product.product_id !== itemToRemove);
+  productsID.value = productsID.value?.filter((id: number) => id !== itemToRemove);
+  totalOrder.value = totalOrder.value?.filter((product: OrderItem) => product.product_id !== itemToRemove);
 }
 
 // all total prices of products summarized
 const totalSum = computed(() => {
-  return totalOrder.value.reduce((sum, item) => sum + item.total, 0);  
+  return totalOrder.value.reduce((sum: number, item: OrderItem) => sum + item.total, 0);  
 });
 
 // watch whether all inputs are correctly filled
 watchEffect(() => {
   if (orderTitle.value && totalSum.value > 0) filledInputs.value = true;
   else filledInputs.value = false;
-})
+});
+
+const create = () => {
+  createOrder(totalOrder.value, orderTitle.value, totalSum.value);
+}
 
 </script>
 
@@ -77,7 +83,7 @@ watchEffect(() => {
         <p class="text-neutral-100 text-xl font-semibold">Order total: ${{ totalSum.toFixed(2) }}</p>
         <span class="flex gap-8">
           <InputText v-model="orderTitle" placeholder="Order title" />
-          <Button v-if="!loading" @click="createOrder(orderTitle, totalSum)" label="Order" class="w-32" :disabled="!filledInputs"/>
+          <Button v-if="!loading" @click="create" label="Order" class="w-32" :disabled="!filledInputs"/>
           <Button v-else icon="pi pi-spin pi-spinner" class="w-32"/>
         </span>
       </span>

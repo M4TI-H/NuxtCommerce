@@ -1,0 +1,58 @@
+import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import type { NewOrderDetails } from "~/types/OrderDetailType";
+
+export default defineEventHandler(async (event) => {
+  const supabase = await serverSupabaseClient(event);
+  const user = await serverSupabaseUser(event);
+
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: "User unauthorized" });
+  }
+
+  const body = await readBody<{
+    title: string;
+    sum: number;
+    items: {
+      product_id: number;
+      quantity: number;
+      price_at_order: number;
+    }[];
+  }>(event);
+
+  const { data: newOrder, error } = await supabase
+    .from("orders")
+    .insert({
+      order_title: body.title,
+      total_price: body.sum,
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    throw createError({ statusCode: 500, statusMessage: error?.message });
+  }
+
+  if (!newOrder) {
+    throw createError({ statusCode: 500, statusMessage: "Failed to create order." });
+  }
+
+  const orderItems: NewOrderDetails[] = body.items.map(item => ({
+    order_id: newOrder.id,
+    product_id: item.product_id!,
+    quantity: item.quantity,
+    price_at_order: item.price_at_order,
+    user_id: user.id
+  }));
+
+  console.log("newOrder.id:", newOrder.id);
+  console.log("orderItems:", orderItems);
+
+  const { error: detailError } = await supabase
+  .from("ordersDetails")
+  .insert(orderItems)
+
+  if (detailError) {
+    throw createError({ statusCode: 500, statusMessage: detailError.message });
+  }
+
+});

@@ -6,7 +6,7 @@ const { order } = defineProps<{
 }>();
 
 const { formatDate } = useFormatDate();
-const { orderDetails, fetchOrderDetails } = useFetchOrderDetails();
+const { orderDetails, fetchOrderDetails } = useOrder();
 
 onMounted(() => fetchOrderDetails(order.id));
 

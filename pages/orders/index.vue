@@ -1,31 +1,11 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
-import type Order from '~/types/OrderType';
-const supabase = useSupabaseClient();
 
 definePageMeta({
   middleware: 'auth'
 });
 
-const ordersData = ref<Order[]>([]);
-const loading = ref<boolean>(false);
-
-async function fetchOrders() {
-
-  loading.value = true;
-  const { data, error } = await supabase
-  .from("orders")
-  .select("*")
-  .order("order_date", { ascending: false })
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  ordersData.value = data;
-  loading.value = false;
-}
+const { loading, ordersData, fetchOrders } = useOrder();
 
 onMounted(fetchOrders);
 </script>
