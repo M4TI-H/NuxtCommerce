@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
+import type Product from '~/types/ProductType';
 
 definePageMeta({
   middleware: 'auth'
@@ -20,14 +21,32 @@ const filterOrderOptions = [
 
 const filter = ref<string>("date_of_creation");
 const order = ref<number>(1);
+const productsDataCopy = ref<Product[]>([]);
+const search = ref<string>("");
 
 const changeFilter = () => {
   refreshProductsData();
-  console.log(filter.value, order.value);
 }
 
 const refreshProductsData = async () => {
   await fetchUserProducts(filter.value, order.value === 1);
+  productsDataCopy.value = [...(productsData.value || [])];
+}
+
+const searchProducts = () => {
+  const input = search.value.trim().toLowerCase();
+
+  if (!input) {
+    productsData.value = [...productsDataCopy.value];
+    return;
+  }
+
+  const filtered = productsDataCopy.value?.filter(item => 
+    item.name.toLowerCase().includes(input) ||
+    item.code.toLowerCase().includes(input)
+  );
+
+  productsData.value = filtered;
 }
 
 onMounted(() => {
@@ -56,7 +75,8 @@ onMounted(() => {
             <InputGroupAddon >
               <i class="pi pi-search"></i>
             </InputGroupAddon>
-            <InputText id="name" class="h-12 font-semibold" placeholder="Search your products"/>
+            <InputText v-model="search" @value-change="searchProducts"
+              class="h-12 font-semibold" placeholder="Search your products"/>
           </InputGroup>
         </div>
         <div class="w-[30%] flex gap-2 justify-end">

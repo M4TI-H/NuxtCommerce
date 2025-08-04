@@ -43,12 +43,11 @@ const handleEdit = () => {
 
     <InputGroup>
       <InputGroupAddon >
-        <i class="pi pi-box"></i>
+        <i class="pi pi-barcode"></i>
       </InputGroupAddon>
       <IftaLabel>
-        <InputNumber id="availability" v-model="newData.availability" class="h-12 font-semibold"
-          :maxFractionDigits="0" :min="0"/>
-        <label for="availability">Availability</label>
+        <InputText id="code" v-model="newData.code" class="h-12 font-semibold"/>
+        <label for="code">Code</label>
       </IftaLabel>
     </InputGroup>
 
@@ -65,11 +64,12 @@ const handleEdit = () => {
 
     <InputGroup>
       <InputGroupAddon >
-        <i class="pi pi-barcode"></i>
+        <i class="pi pi-box"></i>
       </InputGroupAddon>
       <IftaLabel>
-        <InputText id="code" v-model="newData.code" class="h-12 font-semibold"/>
-        <label for="code">Code</label>
+        <InputNumber id="availability" v-model="newData.availability" class="h-12 font-semibold"
+          :maxFractionDigits="0" :min="0"/>
+        <label for="availability">Availability</label>
       </IftaLabel>
     </InputGroup>
 

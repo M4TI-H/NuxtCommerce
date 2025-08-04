@@ -34,13 +34,13 @@ const showOrderTable = () => orderTableDisplay.value = !orderTableDisplay.value;
       <DataTable :value="orderDetails" dataKey="id">
         <Column field="products.code" header="Code"></Column>
         <Column field="products.name" header="Name"></Column>
-        <Column field="price_at_order" header="Price ($)">
+        <Column field="price_at_order" header="Price">
           <template #body="slot">
             ${{ slot.data.price_at_order.toFixed(2) }}
           </template>
         </Column>
         <Column field="quantity" header="Quantity"></Column>
-        <Column header="Total ($)">
+        <Column header="Total">
           <template #body="slot">
             ${{ (slot.data.quantity * slot.data.price_at_order).toFixed(2) }}
           </template>

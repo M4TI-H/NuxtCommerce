@@ -1,46 +1,55 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
 import type OrderItem from '~/types/OrderItemType';
+import type Product from '~/types/ProductType';
 
 definePageMeta({
   middleware: 'auth'
 });
 
 const { totalOrder, loading, createOrder, updateTotalOrder } = useOrder();
-const { publicProductsData, fetchPublicProducts } = useProduct();
+const { publicProductsData, fetchPublicProducts, product, fetchOneProduct } = useProduct();
 
 onMounted(async () => await fetchPublicProducts());
 
+const allProducts = ref<Product[]>([]);
 const selectedNewProduct = ref<number | null>(null);
 const isProductSelected = ref<boolean>(false);
-const productsID = ref<number[]>([]);
 const filledInputs = ref<boolean>(false);
 const orderTitle = ref<string>("");
 
 // data computed for product select input
 const options = computed(() =>
   publicProductsData.value
-  ?.filter(product => !productsID.value.includes(product.id))
+  ?.filter(product => !allProducts.value.some(p => p.id === product.id))
   .map(product => ({
-    label: product.name,
-    value: product.id
+    label: `${product.name} | #${product.code}`,
+    value: product.id,
+    disabled: product.availability === 0
   })) || []
 );
 
+// check whether product is selected to enable button
 watch(selectedNewProduct, (newValue) => {
   isProductSelected.value = newValue !== null;
 });
 
-// pass product ID to display its content
-const handleAddToOrder = () => {
+// add product to order
+const handleAddToOrder = async () => {
   if (selectedNewProduct.value) {
-    productsID.value.push(selectedNewProduct.value);
+    await fetchOneProduct(selectedNewProduct.value);
   }
+
+  if (product.value) {
+    allProducts.value.push(product.value);
+  }
+  selectedNewProduct.value = null;
 }
 
 // handle removal from order list
 const removeFromTotalOrder = (itemToRemove: number) => {
-  productsID.value = productsID.value?.filter((id: number) => id !== itemToRemove);
+  selectedNewProduct.value = null;
+  allProducts.value = allProducts.value?.filter(product => product.id !== itemToRemove);
   totalOrder.value = totalOrder.value?.filter((product: OrderItem) => product.product_id !== itemToRemove);
 }
 
@@ -66,17 +75,25 @@ const create = () => {
     <Menu />
     <div class="w-[50vw] h-[80vh] p-4 flex flex-col items-center gap-8 bg-neutral-500 rounded-2xl">
       <p class="text-neutral-100 text-2xl font-semibold">New order</p>
-      <div class="w-full max-h-[45vh] flex flex-col items-center"> 
-        <OrderProduct v-for="product in productsID" :productID="product"
-          @update-item="updateTotalOrder" @remove-item="removeFromTotalOrder"
-        />
-      </div>
+      <OrderTable :products="allProducts" 
+        @remove-item="removeFromTotalOrder"
+        @update-item="updateTotalOrder"
+      />
 
       <span class="flex gap-8">
         <Select v-model="selectedNewProduct" :options="options" 
-          option-label="label" option-value="value" 
+          optionLabel="label" optionValue="value" optionDisabled="disabled"
           placeholder="Select product" class="w-64"
-        />
+        >
+          <template #option="slot">
+            <div class="w-full flex justify-between items-center">
+              {{ slot.option.label }}
+              <span v-if="slot.option.disabled" class="text-xs text-red-500">
+                Out of stock
+              </span>
+            </div>
+          </template>
+        </Select>
         <Button @click="handleAddToOrder" label="Add to your order" icon="pi pi-plus-circle" :disabled="!isProductSelected || options.length === 0"/>
       </span>
       <span class="w-full h-24 flex flex-col gap-4 items-end mt-auto">
