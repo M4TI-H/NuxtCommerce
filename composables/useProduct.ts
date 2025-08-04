@@ -6,11 +6,18 @@ export function useProduct(){
   const loading = ref<boolean>(false);
 
   // fetch only the products added by the user
-  const fetchUserProducts = async() => {
+  const fetchUserProducts = async(filter: string, order: boolean) => {
     loading.value = true;
     
     try {
-      const data = await $fetch<Product[]>("/api/products/fetch_all");
+      const data = await $fetch<Product[]>("/api/products/fetch_all", {
+        method: "POST",
+        body: {
+          filter: filter,
+          order: order
+        }
+      }
+      );
       productsData.value = data;
     }
     catch (error: any) {
@@ -78,7 +85,8 @@ export function useProduct(){
           name: data.name,
           code: data.code,
           price: data.price,
-          isPublic: data.isPublic
+          isPublic: data.isPublic,
+          availability: data.availability
         }
       });
     }
@@ -99,7 +107,8 @@ export function useProduct(){
           name: newData.name,
           code: newData.code,
           price: newData.price,
-          isPublic: newData.isPublic
+          isPublic: newData.isPublic,
+          availability: newData.availability
         }
       });
     }

@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
     code: string;
     price: number;
     isPublic: boolean;
+    availability: number;
   }>(event);
 
   const { error } = await supabase
@@ -28,6 +29,7 @@ export default defineEventHandler(async (event) => {
       price: body.price,
       code: body.code,
       isPublic: body.isPublic,
+      availability: body.availability
     } as any)
     .eq("id", productID)
 

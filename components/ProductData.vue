@@ -21,19 +21,20 @@ const handleDelete = async () => {
 </script>
 
 <template>
-  <span class="w-full flex items-center justify-between">
-    <span>
-      <p class="text-neutral-100 text-3xl font-bold">{{ product.name }}</p>
+  <div class="w-full flex items-center justify-between">
+    <div>
+      <p class="text-neutral-100 text-xl font-bold">{{ product.name }}</p>
       <p class="text-neutral-400 text-md font-semibold">#{{ product.code }}</p>
-    </span>
+    </div>
     <i v-if="!product.isPublic" class="pi pi-lock" />
     <i v-if="product.isPublic" class="pi pi-lock-open" />
-  </span>
+  </div>
 
-  <p class="text-neutral-100 text-5xl font-bold">${{ product.price }}</p>
+  <p class="text-neutral-100 text-3xl font-bold">${{ product.price }}</p>
+  <p class="text-neutral-400 text-md font-semibold">Available items: {{ product.availability }}</p>
 
-  <span class="w-full flex items-center justify-evenly mt-auto">
+  <div class="w-full flex items-center justify-evenly mt-auto">
     <Button @click="emit('edit')" label="Edit" class="w-20 h-8" severity="info"/>
     <Button @click="handleDelete" label="Delete"class="w-20 h-8" severity="danger"/>
-  </span>
+  </div>
 </template>

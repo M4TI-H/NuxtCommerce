@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
     code: string;
     price: number;
     isPublic: boolean;
+    availability: number;
   }>(event);
 
   const { error } = await supabase
@@ -22,7 +23,8 @@ export default defineEventHandler(async (event) => {
       code: body.code,
       price: body.price,
       isPublic: body.isPublic,
-      user_id: user.id
+      user_id: user.id,
+      availability: body.availability
     });
 
   if (error) {

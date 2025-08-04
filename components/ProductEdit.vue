@@ -13,6 +13,7 @@ const newData = ref<Product>({
   price: product.price,
   code: product.code,
   isPublic: product.isPublic,
+  availability: product.availability,
   user_id: product.user_id
 });
 
@@ -29,29 +30,58 @@ const handleEdit = () => {
 </script>
 
 <template>
-  <IftaLabel class="mt-4">
-    <InputText id="name" v-model="newData.name" class="h-12"/>
-    <label for="name">Product name</label>
-  </IftaLabel>
-  <IftaLabel>
-    <InputNumber id="price" v-model="newData.price" class="h-12"
-      :minFractionDigits="0" :maxFractionDigits="2"/>
-    <label for="price">Price</label>
-  </IftaLabel>
-  <IftaLabel>
-    <InputText id="code" v-model="newData.code" class="h-12"/>
-    <label for="code">Code</label>
-  </IftaLabel>
+  <div class="w-[90%] flex flex-col gap-4">
+    <InputGroup>
+      <InputGroupAddon >
+        <i class="pi pi-folder"></i>
+      </InputGroupAddon>
+      <IftaLabel >
+        <InputText id="name" v-model="newData.name" class="h-12 font-semibold"/>
+        <label for="name">Product name</label>
+      </IftaLabel>
+    </InputGroup>
 
-  <span class="w-[90%] flex items-center justify-between">
-    <p class="text-neutral-100 text-md">Set visibility to</p>
-    <Button
-      @click="newData.isPublic = !newData.isPublic"
-      :icon="newData.isPublic ? 'pi pi-lock-open' : 'pi pi-lock'"
-      :label="newData.isPublic ? 'Public' : 'Private'"
-      class="w-22 h-10"
+    <InputGroup>
+      <InputGroupAddon >
+        <i class="pi pi-box"></i>
+      </InputGroupAddon>
+      <IftaLabel>
+        <InputNumber id="availability" v-model="newData.availability" class="h-12 font-semibold"
+          :maxFractionDigits="0" :min="0"/>
+        <label for="availability">Availability</label>
+      </IftaLabel>
+    </InputGroup>
+
+    <InputGroup>
+      <InputGroupAddon >
+        <i class="pi pi-dollar"></i>
+      </InputGroupAddon>
+      <IftaLabel>
+      <InputNumber id="price" v-model="newData.price" class="h-12 font-semibold"
+        :minFractionDigits="0" :maxFractionDigits="2"/>
+        <label for="price">Price</label>
+      </IftaLabel>
+    </InputGroup>
+
+    <InputGroup>
+      <InputGroupAddon >
+        <i class="pi pi-barcode"></i>
+      </InputGroupAddon>
+      <IftaLabel>
+        <InputText id="code" v-model="newData.code" class="h-12 font-semibold"/>
+        <label for="code">Code</label>
+      </IftaLabel>
+    </InputGroup>
+
+    <div class="w-full flex items-center justify-evenly">
+    <SelectButton v-model="newData.isPublic" size="small"
+    :options="[{ label: 'Public', value: true }, { label: 'Private', value: false }]"
+    optionLabel="label" optionValue="value"
+    :default-value="newData.isPublic"
     />
-  </span>
+  </div>
+  </div>
+  
   <span class="w-full flex items-center justify-evenly mt-auto">
     <Button @click="emit('cancel')" label="Cancel" class="w-20 h-8"/>
     <Button @click="handleEdit" label="Confirm" class="w-20 h-8"/>

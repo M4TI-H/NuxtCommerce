@@ -4,5 +4,6 @@ export default interface Product {
   code: string;
   isPublic: boolean;
   price: number;
+  availability: number;
   user_id: string;
 }

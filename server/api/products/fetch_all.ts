@@ -9,11 +9,16 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: "User unauthorized" });
   }
 
+  const body = await readBody<{
+    filter: string;
+    order: boolean;
+  }>(event);
+
   const { data, error } = await supabase
     .from("products")
-    .select("id, name, code, isPublic, price, user_id")
+    .select("*")
     .eq("user_id", user.id)
-    .order("date_of_creation", { ascending: false });
+    .order(`${body.filter}`, { ascending: body.order });
 
   if (error) {
     throw createError({ statusCode: 500, statusMessage: error.message });
