@@ -42,7 +42,7 @@ onMounted(() => {
     />
 
     <div v-if="!loading" class="w-[70%] flex flex-wrap gap-8">
-      <ProductsProduct v-for="product in productsData" :product="product" @refresh="refreshProductsData"/>
+      <ProductsItem v-for="product in productsData" :product="product" @refresh="refreshProductsData"/>
     </div>
   </div>
 </template>
