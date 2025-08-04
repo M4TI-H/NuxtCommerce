@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type Product from '~/types/ProductType';
+import Content from './Content.vue';
+import Edit from './Edit.vue';
 
 const { product } = defineProps<{
   product: Product
@@ -20,7 +22,7 @@ const handleEdit = () => {
 
 <template>
   <div class="w-64 h-96 p-4 flex flex-col items-center bg-neutral-800 rounded-2xl gap-4">
-    <ProductData v-if="!isEditted" :product="product" @edit="switchDisplayMode" @refresh="emit('refresh')"/>
-    <ProductEdit v-if="isEditted" :product="product" @confirm="handleEdit" @cancel="switchDisplayMode"/>
+    <Content v-if="!isEditted" :product="product" @edit="switchDisplayMode" @refresh="emit('refresh')"/>
+    <Edit v-if="isEditted" :product="product" @confirm="handleEdit" @cancel="switchDisplayMode"/>
   </div>
 </template>

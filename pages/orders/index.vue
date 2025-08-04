@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Menu from '~/components/Menu.vue';
+import type Order from '~/types/OrderType';
 
 definePageMeta({
   middleware: 'auth'
@@ -7,7 +8,22 @@ definePageMeta({
 
 const { loading, ordersData, fetchOrders } = useOrder();
 
-onMounted(fetchOrders);
+const filter = ref<string>("order_date");
+const order = ref<number>(1);
+const filteredOrders = ref<Order[]>([]);
+
+const refreshOrdersData = async () => {
+  await fetchOrders(filter.value, order.value === 1);
+  filteredOrders.value = ordersData.value;
+}
+
+const updateSearchResults = (filtered: Order[]) => {
+  filteredOrders.value = filtered;
+}
+
+onMounted(() => {
+  refreshOrdersData();
+});
 </script>
 
 <template>
@@ -16,12 +32,15 @@ onMounted(fetchOrders);
     <div v-if="loading" class="absolute top-1/2">
       <i icon="pi pi-spin pi-spinner"></i>
     </div>
-    <div v-else @click="navigateTo('/orders/create')"
-      class="size-40 bg-emerald-600 rounded-2xl flex flex-col justify-center items-center gap-8
-      hover:bg-emerald-700 cursor-pointer">
-      <i class="pi pi-cart-plus" style="font-size: 40px"></i>
-      <p class="text-neutral-50 text-md font-semibold">Create new order</p>
+
+    <OrdersSearch :ordersData="ordersData" 
+      v-model:filter="filter"
+      v-model:order="order"
+      @refresh="refreshOrdersData"
+      @update:search="updateSearchResults"
+    />
+    <div v-if="!loading" class="w-full flex flex-col gap-8">
+      <OrdersOrder v-for="order in filteredOrders" :order="order"/>
     </div>
-    <Order v-for="order in ordersData" :order="order"/>
   </div>
 </template>

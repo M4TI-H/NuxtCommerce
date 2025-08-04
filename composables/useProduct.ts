@@ -1,11 +1,11 @@
 import type Product from "~/types/ProductType";
-const productsData = ref<Product[]>();
 
 export function useProduct(){
   const errorMsg = ref<string>("");
   const loading = ref<boolean>(false);
 
   // fetch only the products added by the user
+  const productsData = ref<Product[]>();
   const fetchUserProducts = async(filter: string, order: boolean) => {
     loading.value = true;
     

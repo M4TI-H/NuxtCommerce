@@ -3,17 +3,22 @@ import type OrderItem from '~/types/OrderItemType';
 import type { OrderDetails } from '~/types/OrderDetailType';
 
 export function useOrder() {
-  const user = useSupabaseUser();
   const errorMsg = ref<string>("");
   const loading = ref<boolean>(false);
 
   const ordersData = ref<Order[]>([]);
   //fetch all orders
-  const fetchOrders = async () => {
+  const fetchOrders = async (filter: string, order: boolean) => {
     loading.value = true;
 
     try {
-      const data = await $fetch("/api/orders/fetch_all");
+      const data = await $fetch("/api/orders/fetch_all", {
+        method: "POST",
+        body: {
+          filter: filter,
+          order: order
+        }
+      });
       ordersData.value = data;
     }
     catch(error: any){

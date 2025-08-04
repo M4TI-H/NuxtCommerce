@@ -73,7 +73,7 @@ const create = () => {
 <template>
   <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center p-8 gap-8">
     <Menu />
-    <div class="w-[50vw] h-[80vh] p-4 flex flex-col items-center gap-8 bg-neutral-500 rounded-2xl">
+    <div class="w-[50vw] h-[80vh] p-4 flex flex-col items-center gap-8 bg-neutral-800 rounded-2xl">
       <p class="text-neutral-100 text-2xl font-semibold">New order</p>
       <OrderTable :products="allProducts" 
         @remove-item="removeFromTotalOrder"
