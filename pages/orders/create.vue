@@ -75,7 +75,7 @@ const create = () => {
     <Menu />
     <div class="w-[50vw] h-[80vh] p-4 flex flex-col items-center gap-8 bg-neutral-800 rounded-2xl">
       <p class="text-neutral-100 text-2xl font-semibold">New order</p>
-      <OrderTable :products="allProducts" 
+      <OrdersOrderTable :products="allProducts" 
         @remove-item="removeFromTotalOrder"
         @update-item="updateTotalOrder"
       />
@@ -88,7 +88,7 @@ const create = () => {
           <template #option="slot">
             <div class="w-full flex justify-between items-center">
               {{ slot.option.label }}
-              <span v-if="slot.option.disabled" class="text-xs text-red-500">
+              <span v-if="slot.option.disabled" class="text-xs font-semibold text-red-500">
                 Out of stock
               </span>
             </div>

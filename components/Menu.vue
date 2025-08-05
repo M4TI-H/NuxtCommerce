@@ -22,12 +22,12 @@ async function handleLogout() {
 
 </script>
 <template>
-  <div class="w-[90%] h-16 bg-emerald-600 rounded-2xl
-    flex items-center justify-between p-4">
-    <p v-if="user?.email" class="w-[30%] text-neutral-100 text-xl font-semibold">Logged as: {{ user.email }}</p>
-    <NuxtLink class="text-neutral-100 text-3xl font-semibold decoration-none text-center w-[30%]" to="/panel">Nuxt Commerce</NuxtLink>
+  <div class="sm:w-[90%] w-full h-12 sm:h-16 bg-emerald-600 rounded-2xl
+    flex items-center justify-between px-2 sm:px-4">
+    <p v-if="user?.email" class="w-[30%] text-neutral-100 text-xs sm:text-xl font-semibold">Logged as: {{ user.email }}</p>
+    <NuxtLink class="text-neutral-100 text-sm sm:text-xl lg:text-3xl font-semibold decoration-none text-center w-[30%]" to="/panel">Nuxt Marketplace</NuxtLink>
     <div class="w-[30%] flex justify-end">
-      <Button @click="handleLogout" label="Log out" />
+      <Button @click="handleLogout" label="Log out" class="w-22 sm:w-24 h-10"/>
     </div>
   </div>
 </template>

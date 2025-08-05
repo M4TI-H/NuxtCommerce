@@ -28,7 +28,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center p-8 gap-4">
+  <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center py-8 gap-8">
     <Menu />
     <div v-if="loading" class="absolute top-1/2">
       <i class="pi pi-spin pi-spinner text-white"></i>
@@ -41,7 +41,7 @@ onMounted(() => {
       @update:search="updateSearchResults"
     />
 
-    <div v-if="!loading" class="w-[70%] flex flex-wrap gap-8">
+    <div v-if="!loading" class="w-[80%] flex flex-wrap justify-center gap-8">
       <ProductsItem v-for="product in productsData" :product="product" @refresh="refreshProductsData"/>
     </div>
   </div>

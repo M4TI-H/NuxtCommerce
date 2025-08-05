@@ -50,8 +50,7 @@ watch(search, () => {
 </script>
 
 <template>
-<div class="w-full flex flex-col items-center gap-8">
-  <div class="w-[80%] h-12 flex items-center justify-between">
+  <div class="w-full sm:w-[80%] h-12 flex items-center justify-between">
     <div class="w-[30%]">
       <Button icon="pi pi-plus" label="Add new product" 
         size="medium" raised class="w-44"
@@ -77,5 +76,4 @@ watch(search, () => {
       />
     </div>
   </div>
-</div>
 </template>

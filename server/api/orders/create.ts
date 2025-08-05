@@ -44,15 +44,44 @@ export default defineEventHandler(async (event) => {
     user_id: user.id
   }));
 
-  console.log("newOrder.id:", newOrder.id);
-  console.log("orderItems:", orderItems);
-
   const { error: detailError } = await supabase
   .from("ordersDetails")
   .insert(orderItems)
 
   if (detailError) {
     throw createError({ statusCode: 500, statusMessage: detailError.message });
+  }
+
+  const productsID = body.items.map(item => item.product_id);
+
+  const { data, error: productsError } = await supabase
+    .from("products")
+    .select("id, availability")
+    .in("id", productsID)
+
+  if (productsError) {
+    throw createError({ statusCode: 500, statusMessage: productsError.message });
+  }
+
+  for (const item of body.items) {
+    const product = data?.find(p => p.id === item.product_id);
+    
+    const newStock = product.availability - item.quantity;
+
+    if (newStock < 0) {
+      throw createError({ statusCode: 400, statusMessage: `Quantity ordered of product ${item.product_id} is bigger than stocked` });
+    }
+    
+    const { error: updateError } = await supabase
+    .from("products")
+    .update({
+      availability: newStock
+    })
+    .eq("id", item.product_id);
+
+    if (updateError) {
+      throw createError({ statusCode: 500, statusMessage: updateError.message });
+    }
   }
 
 });
