@@ -1,4 +1,5 @@
 import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import type ProductHistory from "~/types/ProductHistoryType";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -14,26 +15,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Invalid product ID" });
   }
 
-  const body = await readBody<{
-    name: string;
-    code: string;
-    price: number;
-    isPublic: boolean;
-    availability: number;
-  }>(event);
-
-  const { error } = await supabase
-    .from("products")
-    .update({
-      name: body.name,
-      price: body.price,
-      code: body.code,
-      isPublic: body.isPublic,
-      availability: body.availability
-    })
-    .eq("id", productID)
+  const { data, error } = await supabase
+    .from("ordersDetails")
+    .select(`quantity, price_at_order, orders (order_date)`)
+    .eq("product_id", productID)
 
   if (error) {
     throw createError({ statusCode: 500, statusMessage: error.message });
   }
+
+  return data as ProductHistory[];
 });

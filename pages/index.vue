@@ -20,7 +20,7 @@ definePageMeta({
       <div class="flex flex-col gap-16">
         <p class="text-neutral-100 text-xl font-semibold z-10 self-center sm:self-start"><span class="text-emerald-400">Nuxt </span>Marketplace</p>
         <p class="text-neutral-100 text-lg sm:text-3xl lg:text-5xl font-bold self-center z-10">Welcome to our marketplace</p>
-        <p class="text-neutral-100 text-xs sm:text-md font-thin self-center text-center w-[18rem] sm:w-[36rem] lg:w-[44rem] z-10">
+        <p class="text-neutral-100 text-xs sm:text-sm font-thin self-center text-center w-[18rem] sm:w-[36rem] lg:w-[44rem] z-10">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tempor, neque vitae eleifend rutrum, lacus odio commodo odio, eget viverra lorem lorem at justo. 
           Quisque malesuada risus id magna pulvinar placerat. In in faucibus urna, ut scelerisque dui. Donec ultricies eleifend est nec maximus. Phasellus lacus diam, aliquam
           ut ultricies in, venenatis ut nibh. Integer et lacus ligula. Integer purus enim, viverra vitae sagittis sit amet, tincidunt in turpis. Curabitur id augue aliquet, 

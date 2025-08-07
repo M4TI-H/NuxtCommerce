@@ -1,3 +1,4 @@
+import type ProductHistory from "~/types/ProductHistoryType";
 import type Product from "~/types/ProductType";
 
 export function useProduct(){
@@ -53,7 +54,7 @@ export function useProduct(){
       product.value = data;
     }
     catch (error: any) {
-      errorMsg.value = error.message
+      errorMsg.value = error.message;
     }
 
     loading.value = false;
@@ -69,7 +70,7 @@ export function useProduct(){
       });
     }
     catch (error: any) {
-      errorMsg.value = error.message
+      errorMsg.value = error.message;
     }
 
     loading.value = false;
@@ -91,7 +92,7 @@ export function useProduct(){
       });
     }
     catch (error: any) {
-      errorMsg.value = error.message
+      errorMsg.value = error.message;
     }
 
     loading.value = false;
@@ -113,7 +114,22 @@ export function useProduct(){
       });
     }
     catch (error: any) {
-      errorMsg.value = error.message
+      errorMsg.value = error.message;
+    }
+
+    loading.value = false;
+  }
+
+  const productHistory = ref<ProductHistory[]>([]);
+  const fetchProductHistory = async (productID: number) => {
+    loading.value = true;
+
+    try {
+      const data = await $fetch(`/api/products/fetch_history/${productID}`);
+      productHistory.value = data;
+    }
+    catch (error: any) {
+      errorMsg.value = error.message;
     }
 
     loading.value = false;
@@ -123,6 +139,7 @@ export function useProduct(){
     productsData,
     publicProductsData,
     product,
+    productHistory,
     errorMsg,
     loading,
     fetchUserProducts,
@@ -130,6 +147,7 @@ export function useProduct(){
     fetchOneProduct,
     deleteProduct,
     addNewProduct,
-    editProduct
+    editProduct,
+    fetchProductHistory
   }
 }

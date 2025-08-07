@@ -8,7 +8,8 @@ const { product } = defineProps<{
 const emit = defineEmits<{
  (e: "edit"): void,
  (e: "delete"): void,
- (e: "refresh"): void
+ (e: "refresh"): void,
+ (e: "show-history", payload: Product): void
 }>();
 
 const {  deleteProduct } = useProduct();
@@ -39,7 +40,7 @@ const handleDelete = async () => {
     <div class="w-full flex items-center justify-end gap-4">
       <Button @click="handleDelete" label="Delete"class="w-20 h-8" severity="danger"/>
       <Button @click="emit('edit')" label="Update" class="w-20 h-8" severity="info"/>
-      <Button label="Order history" class="w-40 h-8"/>
+      <Button @click="emit('show-history', product)" label="Order history" class="w-40 h-8"/>
     </div>
   </div>
 </template>

@@ -6,11 +6,12 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { productsData, loading, fetchUserProducts } = useProduct();
+const { productsData, loading, fetchUserProducts, product, fetchOneProduct } = useProduct();
 
 const filter = ref<string>("date_of_creation");
 const order = ref<number>(1);
 const filteredProducts = ref<Product[]>([]);
+const displayHistory = ref<boolean>(false);
 
 const refreshProductsData = async () => {
   await fetchUserProducts(filter.value, order.value === 1);
@@ -24,6 +25,11 @@ const updateSearchResults = (filtered: Product[]) => {
 onMounted(() => {
   refreshProductsData();
 });
+
+const handleShowHistory = async (product: Product) => {
+  displayHistory.value = true;
+  await fetchOneProduct(product.id);
+}
 
 </script>
 
@@ -42,7 +48,10 @@ onMounted(() => {
     />
 
     <div v-if="!loading" class="w-[80%] flex flex-wrap justify-center gap-8">
-      <ProductsItem v-for="product in productsData" :product="product" @refresh="refreshProductsData"/>
+      <ProductsItem v-for="product in productsData" :product="product" @refresh="refreshProductsData" @show-history="handleShowHistory"/>
+    </div>
+    <div v-if="displayHistory && !loading" class="absolute w-screen h-screen flex items-center justify-center bg-black/70">
+      <ProductsHistory v-if="product" :product="product" @close="displayHistory = false"/>
     </div>
   </div>
 </template>

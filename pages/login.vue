@@ -1,87 +1,87 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient();
+import { Form, Field } from "vee-validate";
+import { z } from "zod";
+import { toTypedSchema } from "@vee-validate/zod";
 
+const supabase = useSupabaseClient();
 const email = ref<string>("");
 const password = ref<string>("");
-const errMsg = ref<string>();
-const filledInputs = ref<boolean>(false);
+const errMsg = ref<string>("");
 const loading = ref<boolean>(false);
 
-function isWhitespace(input: string) {
-  return /^\s*$/.test(input);
-}
-
-const loginUser = async () => {
-
+const handleLogin = async () => {
   loading.value = true;
-  const { error } = await supabase.auth.signInWithPassword({
-    email: email.value.trim(),
-    password: password.value
-  });
-  if (error) {
-    return error.message;
-  }
+  try {
+     const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.value.trim(),
+      password: password.value
+    });
 
-  loading.value = false;
-  return "success";
-}
+    loading.value = false;
 
-async function handleLogin() {
-  if (!email.value || !password.value || isWhitespace(email.value) || isWhitespace(password.value)) {
-    errMsg.value = "Please fill all form fields correctly.";
-    return;
+    if (error) {
+      errMsg.value = error.message;
+    }
+    if (data.user) {
+      navigateTo("/panel");
+    }
   }
-  
-  const response = await loginUser();
-  if (response === "success"){
-    navigateTo("/panel");
-  }
-  else {
-    errMsg.value = response;
+  catch (error: any) {
+    loading.value = false;
+    errMsg.value = error.message;
   }
 }
 
-watchEffect(() => {
-  email.value && password.value ? filledInputs.value = true : filledInputs.value = false;
+const schema = z.object({
+  email: z.string().nonempty({message: "Email is required"}).email({message: "Incorrect email format"}),
+  password: z.string().nonempty("Password is required")
 });
+
+const validationSchema = toTypedSchema(schema);
 
 </script>
 
 <template>
   <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center justify-center gap-8">
+    <div class="w-[60rem] h-[30rem] bg-neutral-800 flex flex-row justify-center gap-16 rounded-3xl shadow-xl">
+      <div class="w-[50%] p-8 flex flex-col items-center gap-16">
+        <p class="text-neutral-100 text-3xl font-semibold">Login to your account</p>
+          <Form @submit="handleLogin" :validationSchema="validationSchema" :validateOnInput="false" :validateOnBlur="true" 
+            v-slot="{ meta }" class="flex flex-col gap-10"
+          >
+            <Field name="email" v-slot="{ field, errorMessage}">
+              <IftaLabel class="w-[16rem] h-[6rem]">
+                <InputText v-bind="field" type="text" class="w-full h-14"/>
+                <label for="email">Email</label>
+                <small v-if="errorMessage" class="text-red-500">*{{ errorMessage }}</small>
+              </IftaLabel>
+            </Field>
 
-    <div v-if="errMsg" class="absolute top-[10%] w-96 h-12 bg-red-400 border-2 border-red-700 rounded-xl opacity-60 flex items-center justify-center">
-      <p class="text-red-700 font-semibold">{{ errMsg }}</p>
-    </div>
+            <Field name="password" v-slot="{field, errorMessage}">
+               <IftaLabel class="w-[16rem] h-[6rem]">
+                <Password  v-bind="field" :inputStyle="{ width: '16rem' }"
+                  class="h-14" toggleMask :feedback="false"/>
+                <label for="password">Password</label>
+                <small v-if="errorMessage" class="text-red-500">{{ errorMessage }}</small>
+              </IftaLabel>
+            </Field>
 
-    <div class="w-96 h-108 bg-neutral-800 flex flex-col items-center gap-16 p-8 pb-0 rounded-3xl shadow-xl">
-      <p class="text-neutral-100 text-2xl font-semibold">Login to your account</p>
-      <IftaLabel class="w-full">
-        <InputText id="email" type="text" v-model="email" 
-          class="w-full"/>
-        <label for="email">Email</label>
-      </IftaLabel>
+            <div class="flex gap-16">
+              <NuxtLink to="/">
+                <Button label="Back" class="w-24"/>
+              </NuxtLink>
 
-      <IftaLabel class="w-full">
-        <InputText id="password" type="password" v-model="password" 
-          class="w-full"/>
-        <label for="password">Password</label>
-      </IftaLabel>
-
-      <span class="w-full flex justify-around">
-        <NuxtLink to="/">
-          <Button label="Back" class="w-24"/>
-        </NuxtLink>
-
-        <Button v-if="!loading" @click="handleLogin"
-          icon="pi pi-user" label="Login" raised 
-          :disabled="!filledInputs" class="w-24"
-        />
-        <Button v-else icon="pi pi-spin pi-spinner" 
-          raised class="w-24"
-        />
-      </span>
-      
+              <Button v-if="!loading" type="submit" icon="pi pi-user" label="Login"
+                :disabled="!meta.valid || !meta.dirty" raised class="w-24"/>
+              <Button v-else icon="pi pi-spin pi-spinner" 
+                raised class="w-24"/>
+            </div>
+          </Form>
+      </div>
+      <div class="w-[50%] h-full flex justify-center items-center">
+        <img src="https://images.unsplash.com/photo-1635468609223-4e59675ac96d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        class="w-[90%] h-[90%] rounded-xl"/>
+      </div>
     </div>
   </div>
 </template>
