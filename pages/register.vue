@@ -1,56 +1,60 @@
 <script setup lang="ts">
+import { useField, useForm } from 'vee-validate';
+import { z } from "zod";
+import { toTypedSchema } from '@vee-validate/zod';
 const supabase = useSupabaseClient();
-
-const email = ref<string>("");
-const password = ref<string>("");
-const passwordRepeat = ref<string>("");
 const errMsg = ref<string>();
-const filledInputs = ref<boolean>(false);
 const loading = ref<boolean>(false);
 
-function isWhitespace(input: string) {
-  return /^\s*$/.test(input);
-}
+const validationSchema = toTypedSchema(
+  z.object({
+    email: z.string()
+      .nonempty({message: "Email is required"})
+      .email({message: "Incorrect email format"}),
+    password: z.string()
+      .nonempty({message: "Password is required"})
+      .min(6, {message: "Password must include at least 6 characters"})
+      .regex(/[!@#$%^&]/, { message: "At least one special character - !@#$%^&"}),
+    repeatPass: z.string()
+      .nonempty({message: "Password is required"})
+  }).refine(data => data.password === data.repeatPass, {
+    message: "Passwords are not the same",
+    path: ["repeatPass"]
+  })
+);
 
-const registerUser = async () => {
+const { handleSubmit, errors, meta } = useForm({
+  validationSchema,
+});
+
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
+const { value: repeatPass } = useField<string>('repeatPass');
+
+const handleRegister = async (values: { email: string; password: string, repeatPass: string }) => {
   loading.value = true;
-  const { error } = await supabase.auth.signUp({
-    email: email.value.trim(),
-    password: password.value
-  });
+  try {
+    const { error } = await supabase.auth.signUp({
+      email: values.email.trim(),
+      password: values.password
+    });
 
-  if (error) {
-    return error.message;
-  }
+    loading.value = false;
 
-  loading.value = false;
-  return "success";
-}
+    if (error) {
+      errMsg.value = error.message;
+      return;
+    }
 
-async function handleRegister() {
-  if (!email.value || !password.value || isWhitespace(email.value) || isWhitespace(password.value)) {
-    errMsg.value = "Please fill all form fields correctly.";
-    return;
-  }
-
-  if (password.value !== passwordRepeat.value) {
-    errMsg.value = "Passwords are not the same.";
-    return;
-  }
-
-  const response = await registerUser();
-  if (response === "success"){
     navigateTo("/panel");
   }
-  else {
-    errMsg.value = response;
+  catch (error: any) {
+    loading.value = false;
+    errMsg.value = error.message;
   }
 }
 
-watchEffect(() => {
-  if (email.value && password.value) filledInputs.value = true;
-  else filledInputs.value = false;
-});
+const onSubmit = handleSubmit(handleRegister);
 
 </script>
 
@@ -64,35 +68,37 @@ watchEffect(() => {
     <div class="w-[60rem] h-[30rem] bg-neutral-800 flex flex-row justify-center gap-16 rounded-3xl shadow-xl">
       <div class="w-[50%] p-8 flex flex-col items-center gap-12">
         <p class="text-neutral-100 text-3xl font-semibold">Register new account</p>
-          <IftaLabel class="w-[16rem]">
-            <InputText id="email" type="text" v-model="email" 
-              class="w-full h-14"/>
+        <form @submit="onSubmit"class="flex flex-col">
+          <IftaLabel class="w-[16rem] h-[6rem]">
+            <InputText v-model="email" type="text" class="w-full h-14"/>
             <label for="email">Email</label>
+            <small v-if="errors.email" class="text-red-500">*{{ errors.email }}</small>
           </IftaLabel>
 
-          <IftaLabel class="w-[16rem]">
-            <Password id="password" v-model="password" :inputStyle="{ width: '16rem' }"
+          <IftaLabel class="w-[16rem] h-[6rem]">
+            <Password v-model="password" :inputStyle="{ width: '16rem' }"
               class="h-14" toggleMask :feedback="false"/>
             <label for="password">Password</label>
+            <small v-if="errors.password" class="text-red-500">*{{ errors.password }}</small>
           </IftaLabel>
 
-          <IftaLabel class="w-[16rem]">
-            <Password id="password" v-model="passwordRepeat" :inputStyle="{ width: '16rem' }"
+          <IftaLabel class="w-[16rem] h-[6rem]">
+            <Password  v-model="repeatPass" :inputStyle="{ width: '16rem' }"
               class="h-14" toggleMask :feedback="false"/>
-            <label for="password">Repeat Password</label>
+            <label for="password">Repeat password</label>
+            <small v-if="errors.repeatPass" class="text-red-500">*{{ errors.repeatPass }}</small>
           </IftaLabel>
-        
-        <div class="flex gap-16">
-          <NuxtLink to="/">
-            <Button label="Back" class="w-24"/>
-          </NuxtLink>
 
-          <Button v-if="!loading" @click="handleRegister"
-            icon="pi pi-user" label="Login" raised 
-            :disabled="!filledInputs" class="w-24"/>
-          <Button v-else icon="pi pi-spin pi-spinner" 
-            raised class="w-24"/>
-        </div>
+          <div class="flex gap-16">
+            <NuxtLink to="/">
+              <Button label="Back" class="w-24"/>
+            </NuxtLink>
+
+            <Button v-if="!loading" type="submit" icon="pi pi-user" label="Register" 
+              :disabled="!meta.valid || !meta.dirty" raised class="w-24"/>
+            <Button v-else icon="pi pi-spin pi-spinner" raised class="w-24"/>
+          </div>
+        </form>
       </div>
       <div class="w-[50%] h-full flex justify-center items-center">
         <img src="https://images.unsplash.com/photo-1635468609223-4e59675ac96d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
