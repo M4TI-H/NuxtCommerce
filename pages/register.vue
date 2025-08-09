@@ -14,7 +14,8 @@ const validationSchema = toTypedSchema(
     password: z.string()
       .nonempty({message: "Password is required"})
       .min(6, {message: "Password must include at least 6 characters"})
-      .regex(/[!@#$%^&]/, { message: "At least one special character - !@#$%^&"}),
+      .regex(/[!@#$%^&]/, { message: "At least one special character - !@#$%^&"})
+      .regex(/(?=.*[A-Z])/, { message: "At least one capitalized letter" }),
     repeatPass: z.string()
       .nonempty({message: "Password is required"})
   }).refine(data => data.password === data.repeatPass, {
@@ -59,51 +60,51 @@ const onSubmit = handleSubmit(handleRegister);
 </script>
 
 <template>
-  <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center justify-center gap-8">
+  <div class="bg-neutral-700 w-screen min-h-screen flex flex-col items-center justify-center gap-8 overflow-auto p-4">
+    <div class="relative flex flex-row items-center p-4 w-full max-w-[84rem] md:h-auto rounded-3xl shadow-2xl bg-neutral-800">
+      <p class="absolute left-4 top-4 text-neutral-100 sm:text-xl font-semibold"><span class="text-emerald-500">Nuxt</span> Marketplace</p>
 
-    <div v-if="errMsg" class="absolute top-[10%] w-96 h-12 bg-red-400 border-2 border-red-700 rounded-xl opacity-60 flex items-center justify-center">
-      <p class="text-red-700 font-semibold">{{ errMsg }}</p>
-    </div>
+      <div class="w-full lg:w-[40rem] lg:max-w-[50%] p-8 flex flex-col items-center gap-4 xl:gap-8 pt-16 sm:pt-24">
+        <div class="flex flex-col items-center gap-4">
+          <p class="text-neutral-100 text-lg sm:text-2xl font-semibold">Register new account</p>
+          <p class="text-neutral-100 w-64 sm:w-96 text-sm sm:text-md font-thin text-center">Create new account using your credentials to access Nuxt Marketplace - a trading platform for enterpreneurs.</p>
+        </div>
 
-    <div class="w-[60rem] h-[30rem] bg-neutral-800 flex flex-row justify-center gap-16 rounded-3xl shadow-xl">
-      <div class="w-[50%] p-8 flex flex-col items-center gap-12">
-        <p class="text-neutral-100 text-3xl font-semibold">Register new account</p>
-        <form @submit="onSubmit"class="flex flex-col">
-          <IftaLabel class="w-[16rem] h-[6rem]">
-            <InputText v-model="email" type="text" class="w-full h-14"/>
+        <form @submit="onSubmit" class="w-full flex flex-col items-center mt-2 xl:mt-8">
+          <IftaLabel class="w-full max-w-[24rem] h-[6rem]">
+            <InputText v-model="email" type="text" class="font-semibold w-full"/>
             <label for="email">Email</label>
-            <small v-if="errors.email" class="text-red-500">*{{ errors.email }}</small>
+            <p v-if="errors.email" class="text-red-500 text-sm sm:text-md ml-2 mt-1">{{ errors.email }}</p>
           </IftaLabel>
 
-          <IftaLabel class="w-[16rem] h-[6rem]">
-            <Password v-model="password" :inputStyle="{ width: '16rem' }"
-              class="h-14" toggleMask :feedback="false"/>
+          <IftaLabel class="w-full max-w-[24rem] h-[6rem]">
+            <Password v-model="password" :inputStyle="{width: '100%'}"
+              class="w-full font-semibold h-14" toggleMask :feedback="false"/>
             <label for="password">Password</label>
-            <small v-if="errors.password" class="text-red-500">*{{ errors.password }}</small>
+            <p v-if="errors.password" class="text-red-500 text-sm sm:text-md ml-2 mt-1">{{ errors.password }}</p>
           </IftaLabel>
 
-          <IftaLabel class="w-[16rem] h-[6rem]">
-            <Password  v-model="repeatPass" :inputStyle="{ width: '16rem' }"
-              class="h-14" toggleMask :feedback="false"/>
+          <IftaLabel class="w-full max-w-[24rem] h-[6rem]">
+            <Password  v-model="repeatPass" :inputStyle="{width: '100%'}"
+              class="w-full font-semibold h-14" toggleMask :feedback="false"/>
             <label for="password">Repeat password</label>
-            <small v-if="errors.repeatPass" class="text-red-500">*{{ errors.repeatPass }}</small>
+            <p v-if="errors.repeatPass" class="text-red-500 text-sm sm:text-md ml-2 mt-1">{{ errors.repeatPass }}</p>
           </IftaLabel>
 
-          <div class="flex gap-16">
-            <NuxtLink to="/">
-              <Button label="Back" class="w-24"/>
-            </NuxtLink>
-
+          <div class="flex flex-col items-center gap-4">
             <Button v-if="!loading" type="submit" icon="pi pi-user" label="Register" 
-              :disabled="!meta.valid || !meta.dirty" raised class="w-24"/>
-            <Button v-else icon="pi pi-spin pi-spinner" raised class="w-24"/>
+              :disabled="!meta.valid || !meta.dirty" raised class="w-[16rem] h-[3rem]"/>
+            <Button v-else icon="pi pi-spin pi-spinner" raised class="w-[16rem] h-[3rem]"/>
+
+            <NuxtLink to="/">
+              <Button label="Back" class="w-[6rem] h-[2rem] xl:h-[3rem]"/>
+            </NuxtLink>
           </div>
         </form>
       </div>
-      <div class="w-[50%] h-full flex justify-center items-center">
-        <img src="https://images.unsplash.com/photo-1635468609223-4e59675ac96d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        class="w-[90%] h-[90%] rounded-xl"/>
-      </div>
+      <img src="https://images.unsplash.com/photo-1635468609223-4e59675ac96d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        class="hidden lg:flex w-[45rem] max-w-[50%] h-[95%] rounded-2xl"
+      />
     </div>
   </div>
 </template>
