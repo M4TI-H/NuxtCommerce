@@ -34,7 +34,7 @@ const handleShowHistory = async (product: Product) => {
 </script>
 
 <template>
-  <div class="fixed bg-neutral-700 w-screen h-screen flex flex-col items-center py-8 gap-8">
+  <div class="relative bg-neutral-700 w-screen min-h-screen flex flex-col items-center md:pt-8 pb-8 gap-8 overflow-y-auto z-0">
     <Menu />
     <div v-if="loading" class="absolute top-1/2">
       <i class="pi pi-spin pi-spinner text-white"></i>
@@ -47,10 +47,10 @@ const handleShowHistory = async (product: Product) => {
       @update:search="updateSearchResults"
     />
 
-    <div v-if="!loading" class="w-[80%] flex flex-wrap justify-center gap-8">
+    <div v-if="!loading" class="w-[90%] flex flex-wrap justify-center gap-8">
       <ProductsItem v-for="product in productsData" :product="product" @refresh="refreshProductsData" @show-history="handleShowHistory"/>
     </div>
-    <div v-if="displayHistory && !loading" class="absolute w-screen h-screen flex items-center justify-center bg-black/70">
+    <div v-if="displayHistory && !loading" class="fixed inset-0 flex items-center justify-center bg-black/70 z-10">
       <ProductsHistory v-if="product" :product="product" @close="displayHistory = false"/>
     </div>
   </div>

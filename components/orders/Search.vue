@@ -53,8 +53,7 @@ watch(search, () => {
   <div class="w-[80%] h-12 flex items-center justify-between">
     <div class="w-[30%]">
       <Button icon="pi pi-plus" label="Place new order" 
-        size="medium" raised class="w-44"
-        @click="navigateTo('orders/create')"/>
+        size="medium" raised class="w-44" @click="navigateTo('orders/create')"/>
     </div>
     <div class="w-[30%] flex">
       <InputGroup>

@@ -22,7 +22,7 @@ const handleEdit = () => {
 </script>
 
 <template>
-  <div class="min-w-72 max-w-96 w-[100%] h-64 p-4 flex flex-col items-center bg-neutral-800 rounded-2xl gap-4">
+  <div class="min-w-72 max-w-96 w-[100%] h-[25rem] p-4 flex flex-col items-center bg-neutral-800 rounded-2xl gap-4">
     <Content v-if="!isEditted" :product="product" @edit="switchDisplayMode" @refresh="emit('refresh')" @show-history="emit('show-history', product)"/>
     <Edit v-if="isEditted" :product="product" @confirm="handleEdit" @cancel="switchDisplayMode"/>
   </div>
