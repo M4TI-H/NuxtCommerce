@@ -31,27 +31,15 @@ const handleEdit = () => {
 
 <template>
   <div class="w-88 flex flex-col gap-4">
-    <div class="w-full flex gap-4">
-      <InputGroup>
-        <InputGroupAddon >
-          <i class="pi pi-folder"></i>
-        </InputGroupAddon>
-        <IftaLabel >
-          <InputText id="name" v-model="newData.name" class="h-12 font-semibold" />
-          <label for="name">Product name</label>
-        </IftaLabel>
-      </InputGroup>
-
-      <InputGroup>
-        <InputGroupAddon >
-          <i class="pi pi-barcode"></i>
-        </InputGroupAddon>
-        <IftaLabel>
-          <InputText id="code" v-model="newData.code" class="h-12 font-semibold"/>
-          <label for="code">Code</label>
-        </IftaLabel>
-      </InputGroup>
-    </div>
+    <InputGroup  class="w-full">
+      <InputGroupAddon >
+        <i class="pi pi-folder"></i>
+      </InputGroupAddon>
+      <IftaLabel >
+        <InputText id="name" v-model="newData.name" class="h-12 font-semibold" />
+        <label for="name">Product name</label>
+      </IftaLabel>
+    </InputGroup>
     
     <div class="w-full flex gap-4">
       <InputGroup>
@@ -77,9 +65,6 @@ const handleEdit = () => {
       </InputGroup>
     </div>
     
-
-   
-
     <div class="w-full flex items-center justify-evenly">
     <SelectButton v-model="newData.isPublic" size="small"
     :options="[{ label: 'Public', value: true }, { label: 'Private', value: false }]"

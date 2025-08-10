@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
       product_id: number;
       quantity: number;
       price_at_order: number;
+      name_at_order: string;
     }[];
   }>(event);
 
@@ -41,6 +42,7 @@ export default defineEventHandler(async (event) => {
     product_id: item.product_id!,
     quantity: item.quantity,
     price_at_order: item.price_at_order,
+    name_at_order: item.name_at_order,
     user_id: user.id
   }));
 

@@ -43,6 +43,7 @@ export function useOrder() {
             product_id: item.product_id,
             quantity: item.quantity,
             price_at_order: item.price,
+            name_at_order: item.name
           }))
         }
       });

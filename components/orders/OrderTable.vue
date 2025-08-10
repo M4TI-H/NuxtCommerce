@@ -22,6 +22,7 @@ watchEffect(() => {
 
     const productData = {
       product_id: product.id,
+      name: product.name,
       quantity: selectedQuantities.value[product.id],
       price: product.price,
       total: product.price * selectedQuantities.value[product.id],
@@ -41,6 +42,7 @@ const handleQuantityChange = async(item: Product, quantity: number | null) => {
 
   const productData = {
     product_id: item.id,
+    name: item.name,
     quantity: quantity,
     price: item.price,
     total: item.price * quantity

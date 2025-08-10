@@ -33,7 +33,7 @@ const showOrderTable = () => orderTableDisplay.value = !orderTableDisplay.value;
     <div v-if="orderTableDisplay" class="w-[58%] bg-neutral-500 rounded-b-2xl">
       <DataTable :value="orderDetails" dataKey="id">
         <Column field="products.code" header="Code"></Column>
-        <Column field="products.name" header="Name"></Column>
+        <Column field="name_at_order" header="Name"></Column>
         <Column field="price_at_order" header="Price">
           <template #body="slot">
             ${{ slot.data.price_at_order.toFixed(2) }}
