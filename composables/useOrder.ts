@@ -6,26 +6,33 @@ export function useOrder() {
   const errorMsg = ref<string>("");
   const loading = ref<boolean>(false);
 
-  const ordersData = ref<Order[]>([]);
+  async function fetchData<FetchType>(url: string, options?: any): Promise<FetchType> {
+    try {
+      return await $fetch<FetchType>(url, options) as FetchType;
+    }
+    catch (error: any) {
+      errorMsg.value = error.message;
+      throw error;
+    }
+  }
+
   //fetch all orders
+  const ordersData = ref<Order[]>([]);
   const fetchOrders = async (filter: string, order: boolean) => {
     loading.value = true;
-
     try {
-      const data = await $fetch("/api/orders/fetch_all", {
+       ordersData.value = await fetchData<Order[]>("/api/orders/fetch_all", {
         method: "POST",
         body: {
           filter: filter,
           order: order
         }
       });
-      ordersData.value = data;
     }
-    catch(error: any){
-      errorMsg.value = error.message;
+    catch(error: any){}
+    finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   //create new order and post order items data to db
@@ -34,7 +41,7 @@ export function useOrder() {
     loading.value = true;
 
     try {
-      await $fetch("/api/orders/create", {
+      await fetchData("/api/orders/create", {
         method: "POST",
         body: {
           title: title,
@@ -47,15 +54,13 @@ export function useOrder() {
           }))
         }
       });
-      
       newOrder.value = [];
       navigateTo("/orders");
     }
-    catch(error: any){
-      errorMsg.value = error.message;
+    catch(error: any) {}
+    finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   // fetch order and product details
@@ -64,14 +69,12 @@ export function useOrder() {
     loading.value = true;
 
     try {
-      const data = await $fetch<OrderDetails[]>(`/api/orders/fetch_details/${orderID}`);
-      orderDetails.value = data;
+      orderDetails.value= await fetchData<OrderDetails[]>(`/api/orders/fetch_details/${orderID}`);
     }
-    catch(error: any){
-      errorMsg.value = error.message;
+    catch(error: any){}
+    finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   // add or update data of product added to the order

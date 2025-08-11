@@ -5,82 +5,70 @@ export function useProduct(){
   const errorMsg = ref<string>("");
   const loading = ref<boolean>(false);
 
+  async function fetchData<FetchType>(url: string, options?: any): Promise<FetchType> {
+    try {
+      return await $fetch<FetchType>(url, options) as FetchType;
+    }
+    catch (error: any) {
+      errorMsg.value = error.message;
+      throw error;
+    }
+  }
+
   // fetch only the products added by the user
   const productsData = ref<Product[]>();
   const fetchUserProducts = async(filter: string, order: boolean) => {
     loading.value = true;
     
     try {
-      const data = await $fetch<Product[]>("/api/products/fetch_all", {
+      productsData.value = await fetchData<Product[]>("/api/products/fetch_all", {
         method: "POST",
-        body: {
-          filter: filter,
-          order: order
-        }
-      }
-      );
-      productsData.value = data;
+        body: { filter, order }
+      });
     }
-    catch (error: any) {
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
-  };
+    catch {}
+    finally { loading.value = false }
+  }
 
   // fetch all products visible to single user
   const publicProductsData = ref<Product[]>();
   const fetchPublicProducts = async() => {
     loading.value = true;
-
     try {
-      const data = await $fetch("/api/products/fetch_public");
-      publicProductsData.value = data;
+      publicProductsData.value = await fetchData<Product[]>("/api/products/fetch_public");
     }
-    catch(error: any){
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
+    catch {}
+    finally { loading.value = false }
   }
 
   //fetch one product selected by user
   const product = ref<Product>();
   const fetchOneProduct = async (productID: number) => {
     loading.value = true;
-
     try {
-      const data = await $fetch(`/api/products/fetch_one/${productID}`);
-      product.value = data;
+      product.value = await fetchData<Product>(`/api/products/fetch_one/${productID}`);
     }
-    catch (error: any) {
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
-  };
+    catch {}
+    finally { loading.value = false }
+  }
 
   //delete one product
   const deleteProduct = async (productID: number) => {
     loading.value = true;
-
     try {
-      await $fetch(`/api/products/delete/${productID}`, {
+      await fetchData<null>(`/api/products/delete/${productID}`, {
         method: "DELETE"
       });
     }
-    catch (error: any) {
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
+    catch {}
+    finally { loading.value = false }
   }
 
+  //add new product to user's list
   const addNewProduct = async (data: Product) => {
     loading.value = true;
-    
     try {
-      await $fetch("/api/products/create", {
+      await fetchData<null>("/api/products/create", {
         method: "POST",
         body: {
           name: data.name,
@@ -91,18 +79,15 @@ export function useProduct(){
         }
       });
     }
-    catch (error: any) {
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
+    catch {}
+    finally { loading.value = false }
   }
 
+  //update product data
   const editProduct = async (newData: Product, productID: number) => {
     loading.value = true;
-    
     try {
-      await $fetch(`/api/products/edit/${productID}`, {
+      await fetchData<null>(`/api/products/edit/${productID}`, {
         method: "PUT",
         body: {
           name: newData.name,
@@ -113,26 +98,19 @@ export function useProduct(){
         }
       });
     }
-    catch (error: any) {
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
+    catch {}
+    finally { loading.value = false }
   }
 
+  //fetch product's order history
   const productHistory = ref<ProductHistory[]>([]);
   const fetchProductHistory = async (productID: number) => {
     loading.value = true;
-
     try {
-      const data = await $fetch(`/api/products/fetch_history/${productID}`);
-      productHistory.value = data;
+      productHistory.value = await $fetch(`/api/products/fetch_history/${productID}`);
     }
-    catch (error: any) {
-      errorMsg.value = error.message;
-    }
-
-    loading.value = false;
+    catch {}
+    finally { loading.value = false }
   }
 
   return {

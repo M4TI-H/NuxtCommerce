@@ -6,7 +6,7 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { productsData, loading, fetchUserProducts, product, fetchOneProduct } = useProduct();
+const { productsData, loading, fetchUserProducts, product, fetchOneProduct, errorMsg } = useProduct();
 
 const filter = ref<string>("date_of_creation");
 const order = ref<number>(1);
@@ -48,7 +48,7 @@ const handleShowHistory = async (product: Product) => {
     />
 
     <div v-if="!loading" class="w-[90%] flex flex-wrap justify-center gap-8">
-      <ProductsItem v-for="product in productsData" :product="product" @refresh="refreshProductsData" @show-history="handleShowHistory"/>
+      <ProductsItem v-for="product in filteredProducts" :product="product" @refresh="refreshProductsData" @show-history="handleShowHistory"/>
     </div>
     <div v-if="displayHistory && !loading" class="fixed inset-0 flex items-center justify-center bg-black/70 z-10">
       <ProductsHistory v-if="product" :product="product" @close="displayHistory = false"/>
